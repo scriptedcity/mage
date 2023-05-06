@@ -2,6 +2,16 @@ import { FREQUENCY } from "./mage.const";
 import { OscillatorType, Source, Envelope } from "./mage.types";
 import { createGainNode } from "./mage.gain";
 
+/**
+ * Create synth.
+ * Create sound source with oscillators.
+ * @param audioContext - Audio context.
+ * @param oscillators - Oscillators.
+ * - type - Oscillator type.
+ * - detune - Cents of detune.
+ * - semitone - Semitones. for example, 12 is an octave.
+ * @returns Sound source.
+ */
 export const createSynth =
   (audioContext: AudioContext) =>
   (

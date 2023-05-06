@@ -1,6 +1,13 @@
 import { Source, Envelope } from "./mage.types";
 import { createGainNode } from "./mage.gain";
 
+/**
+ * Create sampler
+ *
+ * @param audioContext - AudioContext
+ * @param sourceUrls - Array of sound source URLs
+ * @returns Source
+ */
 export const createSampler =
   (audioContext: AudioContext) =>
   async (sourceUrls: string[]): Promise<Source> => {
