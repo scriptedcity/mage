@@ -9,3 +9,4 @@ export { createSampler } from "./mage.sampler";
 export { createScale } from "./mage.scale";
 export { getRandomInt, RNG } from "./mage.utils";
 export * as constant from "./mage.const";
+export * from "./mage.types";
