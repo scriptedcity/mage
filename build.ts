@@ -11,13 +11,13 @@ const shared = {
 build({
   ...shared,
   format: "esm",
-  outfile: "./dist/index.esm.js",
+  outfile: "./index.esm.js",
   target: ["ESNext"],
 });
 
 build({
   ...shared,
   format: "cjs",
-  outfile: "./dist/index.cjs.js",
+  outfile: "./index.cjs.js",
   target: ["ESNext"],
 });
