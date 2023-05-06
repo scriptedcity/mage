@@ -1,23 +1,23 @@
 const { build } = require("esbuild");
 
 const entryFile = "src/index.ts";
-const shared = {
+const option = {
   bundle: true,
   entryPoints: [entryFile],
-  minify: true,
+  minify: false,
   sourcemap: false,
 };
 
 build({
-  ...shared,
+  ...option,
   format: "esm",
-  outfile: "./index.esm.js",
+  outfile: "./dist/index.esm.js",
   target: ["ESNext"],
 });
 
 build({
-  ...shared,
+  ...option,
   format: "cjs",
-  outfile: "./index.cjs.js",
+  outfile: "./dist/index.cjs.js",
   target: ["ESNext"],
 });

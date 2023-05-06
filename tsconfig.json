@@ -10,8 +10,7 @@
     "isolatedModules": true,
     "declaration": true,
     "emitDeclarationOnly": true,
-    "declarationDir": "types",
-    "outDir": "dist"
+    "declarationDir": "dist/types"
   },
   "include": ["./src/**/*"],
   "exclude": ["node_modules"]
