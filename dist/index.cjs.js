@@ -25,9 +25,11 @@ __export(src_exports, {
   createSampler: () => createSampler,
   createScale: () => createScale,
   createSequence: () => createSequence,
+  createStep: () => createStep,
   createSynth: () => createSynth,
   default: () => src_default,
-  getRandomInt: () => getRandomInt
+  getRandomInt: () => getRandomInt,
+  getRootNotes: () => getRootNotes
 });
 module.exports = __toCommonJS(src_exports);
 
@@ -650,6 +652,9 @@ var createScale = (rootNoteNumber, ...chordIntervals) => {
     scale.push(rootNoteNumber + interval);
   });
   return scale;
+};
+var getRootNotes = (scales) => {
+  return scales.map((scale) => scale[0]);
 };
 
 // src/mage.utils.ts

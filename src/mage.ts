@@ -1,4 +1,4 @@
-import { Mage, Spell, Source, Sequence } from "./mage.types";
+import { Mage, Spell, Sequence } from "./mage.types";
 import createSpell from "./mage.spell";
 import { createSynth } from "./mage.synth";
 import { createStep } from "./mage.step";
@@ -74,7 +74,7 @@ export const createMage = ({ tempo = 128, beatsParCycle = 8 }): Mage => {
         spells.set(name, spell);
       }, delay);
     },
-    useMetrognome(enabled: boolean = true) {
+    useMetrognome(enabled = true) {
       if (enabled) {
         const source = createSynth(this.audioContext)([
           {

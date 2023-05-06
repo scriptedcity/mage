@@ -4,14 +4,14 @@ import { WORK_INTERVAL } from "./mage.const";
 const createSpell =
   (mage: Mage) =>
   (props: { source: Source; sequence: Sequence; duration: number }) => {
-    let { source, sequence, duration } = props;
+    const { source, sequence, duration } = props;
     let _isActivated = false;
     let _nextScheduleTime = 0;
     let _currentStep = 0;
     let loopCount = 0;
 
     const flatSteps = (steps: Steps, value: number) => {
-      let result: { step: Step | null; value: number }[] = [];
+      const result: { step: Step | null; value: number }[] = [];
       steps.forEach((step) => {
         if (step instanceof Array) {
           result.push(...flatSteps(step, value / step.length));

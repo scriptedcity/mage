@@ -24,6 +24,7 @@ export const createSequence =
       }
       // repeat
       if (op == ".") {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         /*@ts-ignore*/
         const lastNoteIndex = seq.findLastIndex((note) => note != null);
         if (lastNoteIndex >= 0) {
@@ -41,9 +42,11 @@ export const createSequence =
       }
       // tie
       if (op == "-") {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         /*@ts-ignore*/
         const lastNoteIndex = seq.findLastIndex((note) => note != null);
         if (lastNoteIndex >= 0) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           /*@ts-ignore*/
           seq[lastNoteIndex].duration += duration;
         }

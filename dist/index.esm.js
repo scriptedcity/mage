@@ -624,6 +624,9 @@ var createScale = (rootNoteNumber, ...chordIntervals) => {
   });
   return scale;
 };
+var getRootNotes = (scales) => {
+  return scales.map((scale) => scale[0]);
+};
 
 // src/mage.utils.ts
 function* RNG(seed = 88675123) {
@@ -652,7 +655,9 @@ export {
   createSampler,
   createScale,
   createSequence,
+  createStep,
   createSynth,
   src_default as default,
-  getRandomInt
+  getRandomInt,
+  getRootNotes
 };
