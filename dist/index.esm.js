@@ -16,248 +16,246 @@ __export(mage_const_exports, {
 var WORK_INTERVAL = 0.1;
 var MASTER_TUNE = 440;
 var FREQUENCY = Array(128).fill(void 0).map((_, i) => MASTER_TUNE * Math.pow(2, (i - 69) / 12));
-var NoteNumbers;
-((NoteNumbers2) => {
-  NoteNumbers2.C0 = 12;
-  NoteNumbers2.Cs0 = 13;
-  NoteNumbers2.Db0 = 13;
-  NoteNumbers2.D0 = 14;
-  NoteNumbers2.Ds0 = 15;
-  NoteNumbers2.Eb0 = 15;
-  NoteNumbers2.E0 = 16;
-  NoteNumbers2.Es0 = 17;
-  NoteNumbers2.Fb0 = 16;
-  NoteNumbers2.F0 = 17;
-  NoteNumbers2.Fs0 = 18;
-  NoteNumbers2.Gb0 = 18;
-  NoteNumbers2.G0 = 19;
-  NoteNumbers2.Gs0 = 20;
-  NoteNumbers2.Ab0 = 20;
-  NoteNumbers2.A0 = 21;
-  NoteNumbers2.As0 = 22;
-  NoteNumbers2.Bb0 = 22;
-  NoteNumbers2.B0 = 23;
-  NoteNumbers2.Bs0 = 24;
-  NoteNumbers2.Cb1 = 23;
-  NoteNumbers2.C1 = 24;
-  NoteNumbers2.Cs1 = 25;
-  NoteNumbers2.Db1 = 25;
-  NoteNumbers2.D1 = 26;
-  NoteNumbers2.Ds1 = 27;
-  NoteNumbers2.Eb1 = 27;
-  NoteNumbers2.E1 = 28;
-  NoteNumbers2.Es1 = 29;
-  NoteNumbers2.Fb1 = 28;
-  NoteNumbers2.F1 = 29;
-  NoteNumbers2.Fs1 = 30;
-  NoteNumbers2.Gb1 = 30;
-  NoteNumbers2.G1 = 31;
-  NoteNumbers2.Gs1 = 32;
-  NoteNumbers2.Ab1 = 32;
-  NoteNumbers2.A1 = 33;
-  NoteNumbers2.As1 = 34;
-  NoteNumbers2.Bb1 = 34;
-  NoteNumbers2.B1 = 35;
-  NoteNumbers2.Bs1 = 36;
-  NoteNumbers2.Cb2 = 35;
-  NoteNumbers2.C2 = 36;
-  NoteNumbers2.Cs2 = 37;
-  NoteNumbers2.Db2 = 37;
-  NoteNumbers2.D2 = 38;
-  NoteNumbers2.Ds2 = 39;
-  NoteNumbers2.Eb2 = 39;
-  NoteNumbers2.E2 = 40;
-  NoteNumbers2.Es2 = 41;
-  NoteNumbers2.Fb2 = 40;
-  NoteNumbers2.F2 = 41;
-  NoteNumbers2.Fs2 = 42;
-  NoteNumbers2.Gb2 = 42;
-  NoteNumbers2.G2 = 43;
-  NoteNumbers2.Gs2 = 44;
-  NoteNumbers2.Ab2 = 44;
-  NoteNumbers2.A2 = 45;
-  NoteNumbers2.As2 = 46;
-  NoteNumbers2.Bb2 = 46;
-  NoteNumbers2.B2 = 47;
-  NoteNumbers2.Bs2 = 48;
-  NoteNumbers2.Cb3 = 47;
-  NoteNumbers2.C3 = 48;
-  NoteNumbers2.Cs3 = 49;
-  NoteNumbers2.Db3 = 49;
-  NoteNumbers2.D3 = 50;
-  NoteNumbers2.Ds3 = 51;
-  NoteNumbers2.Eb3 = 51;
-  NoteNumbers2.E3 = 52;
-  NoteNumbers2.Es3 = 53;
-  NoteNumbers2.Fb3 = 52;
-  NoteNumbers2.F3 = 53;
-  NoteNumbers2.Fs3 = 54;
-  NoteNumbers2.Gb3 = 54;
-  NoteNumbers2.G3 = 55;
-  NoteNumbers2.Gs3 = 56;
-  NoteNumbers2.Ab3 = 56;
-  NoteNumbers2.A3 = 57;
-  NoteNumbers2.As3 = 58;
-  NoteNumbers2.Bb3 = 58;
-  NoteNumbers2.B3 = 59;
-  NoteNumbers2.Bs3 = 60;
-  NoteNumbers2.Cb4 = 59;
-  NoteNumbers2.C4 = 60;
-  NoteNumbers2.Cs4 = 61;
-  NoteNumbers2.Db4 = 61;
-  NoteNumbers2.D4 = 62;
-  NoteNumbers2.Ds4 = 63;
-  NoteNumbers2.Eb4 = 63;
-  NoteNumbers2.E4 = 64;
-  NoteNumbers2.Es4 = 65;
-  NoteNumbers2.Fb4 = 64;
-  NoteNumbers2.F4 = 65;
-  NoteNumbers2.Fs4 = 66;
-  NoteNumbers2.Gb4 = 66;
-  NoteNumbers2.G4 = 67;
-  NoteNumbers2.Gs4 = 68;
-  NoteNumbers2.Ab4 = 68;
-  NoteNumbers2.A4 = 69;
-  NoteNumbers2.As4 = 70;
-  NoteNumbers2.Bb4 = 70;
-  NoteNumbers2.B4 = 71;
-  NoteNumbers2.Bs4 = 72;
-  NoteNumbers2.Cb5 = 71;
-  NoteNumbers2.C5 = 72;
-  NoteNumbers2.Cs5 = 73;
-  NoteNumbers2.Db5 = 73;
-  NoteNumbers2.D5 = 74;
-  NoteNumbers2.Ds5 = 75;
-  NoteNumbers2.Eb5 = 75;
-  NoteNumbers2.E5 = 76;
-  NoteNumbers2.Es5 = 77;
-  NoteNumbers2.Fb5 = 76;
-  NoteNumbers2.F5 = 77;
-  NoteNumbers2.Fs5 = 78;
-  NoteNumbers2.Gb5 = 78;
-  NoteNumbers2.G5 = 79;
-  NoteNumbers2.Gs5 = 80;
-  NoteNumbers2.Ab5 = 80;
-  NoteNumbers2.A5 = 81;
-  NoteNumbers2.As5 = 82;
-  NoteNumbers2.Bb5 = 82;
-  NoteNumbers2.B5 = 83;
-  NoteNumbers2.Bs5 = 84;
-  NoteNumbers2.Cb6 = 83;
-  NoteNumbers2.C6 = 84;
-  NoteNumbers2.Cs6 = 85;
-  NoteNumbers2.Db6 = 85;
-  NoteNumbers2.D6 = 86;
-  NoteNumbers2.Ds6 = 87;
-  NoteNumbers2.Eb6 = 87;
-  NoteNumbers2.E6 = 88;
-  NoteNumbers2.Es6 = 89;
-  NoteNumbers2.Fb6 = 88;
-  NoteNumbers2.F6 = 89;
-  NoteNumbers2.Fs6 = 90;
-  NoteNumbers2.Gb6 = 90;
-  NoteNumbers2.G6 = 91;
-  NoteNumbers2.Gs6 = 92;
-  NoteNumbers2.Ab6 = 92;
-  NoteNumbers2.A6 = 93;
-  NoteNumbers2.As6 = 94;
-  NoteNumbers2.Bb6 = 94;
-  NoteNumbers2.B6 = 95;
-  NoteNumbers2.Bs6 = 96;
-  NoteNumbers2.Cb7 = 95;
-  NoteNumbers2.C7 = 96;
-  NoteNumbers2.Cs7 = 97;
-  NoteNumbers2.Db7 = 97;
-  NoteNumbers2.D7 = 98;
-  NoteNumbers2.Ds7 = 99;
-  NoteNumbers2.Eb7 = 99;
-  NoteNumbers2.E7 = 100;
-  NoteNumbers2.Es7 = 101;
-  NoteNumbers2.Fb7 = 100;
-  NoteNumbers2.F7 = 101;
-  NoteNumbers2.Fs7 = 102;
-  NoteNumbers2.Gb7 = 102;
-  NoteNumbers2.G7 = 103;
-  NoteNumbers2.Gs7 = 104;
-  NoteNumbers2.Ab7 = 104;
-  NoteNumbers2.A7 = 105;
-  NoteNumbers2.As7 = 106;
-  NoteNumbers2.Bb7 = 106;
-  NoteNumbers2.B7 = 107;
-  NoteNumbers2.Bs7 = 108;
-  NoteNumbers2.Cb8 = 107;
-  NoteNumbers2.C8 = 108;
-  NoteNumbers2.Cs8 = 109;
-  NoteNumbers2.Db8 = 109;
-  NoteNumbers2.D8 = 110;
-  NoteNumbers2.Ds8 = 111;
-  NoteNumbers2.Eb8 = 111;
-  NoteNumbers2.E8 = 112;
-  NoteNumbers2.Es8 = 113;
-  NoteNumbers2.Fb8 = 112;
-  NoteNumbers2.F8 = 113;
-  NoteNumbers2.Fs8 = 114;
-  NoteNumbers2.Gb8 = 114;
-  NoteNumbers2.G8 = 115;
-  NoteNumbers2.Gs8 = 116;
-  NoteNumbers2.Ab8 = 116;
-  NoteNumbers2.A8 = 117;
-  NoteNumbers2.As8 = 118;
-  NoteNumbers2.Bb8 = 118;
-  NoteNumbers2.B8 = 119;
-  NoteNumbers2.Bs8 = 120;
-  NoteNumbers2.Cb9 = 119;
-  NoteNumbers2.C9 = 120;
-  NoteNumbers2.Cs9 = 121;
-  NoteNumbers2.Db9 = 121;
-  NoteNumbers2.D9 = 122;
-  NoteNumbers2.Ds9 = 123;
-  NoteNumbers2.Eb9 = 123;
-  NoteNumbers2.E9 = 124;
-  NoteNumbers2.Es9 = 125;
-  NoteNumbers2.Fb9 = 124;
-  NoteNumbers2.F9 = 125;
-  NoteNumbers2.Fs9 = 126;
-  NoteNumbers2.Gb9 = 126;
-  NoteNumbers2.G9 = 127;
-})(NoteNumbers || (NoteNumbers = {}));
-var Intervals;
-((Intervals2) => {
-  Intervals2.maj = [0, 4, 7];
-  Intervals2.min = [0, 3, 7];
-  Intervals2.sus4 = [0, 5, 7];
-  Intervals2.sus2 = [0, 2, 7];
-  Intervals2.aug = [0, 4, 8];
-  Intervals2.dim = [0, 3, 6];
-  Intervals2.six = [9];
-  Intervals2.min7 = [10];
-  Intervals2.maj7 = [11];
-  Intervals2.add9 = [14];
-  Intervals2.add11 = [17];
-  Intervals2.add13 = [19];
-  Intervals2.major = [0, 2, 4, 5, 7, 9, 11];
-  Intervals2.minor = [0, 2, 3, 5, 6, 8, 11];
-  Intervals2.harmonicmin = [0, 2, 3, 5, 7, 8, 11];
-  Intervals2.melodicmin = [0, 2, 3, 5, 7, 9, 11];
-  Intervals2.ionian = [0, 2, 4, 5, 7, 9, 11];
-  Intervals2.dorian = [0, 2, 3, 5, 7, 9, 10];
-  Intervals2.phrygian = [0, 1, 3, 5, 7, 8, 10];
-  Intervals2.lydian = [0, 2, 4, 6, 7, 9, 11];
-  Intervals2.mixolydian = [0, 2, 4, 5, 7, 9, 10];
-  Intervals2.aeolian = [0, 2, 3, 5, 7, 8, 10];
-  Intervals2.locrian = [0, 1, 3, 5, 6, 8, 10];
-  Intervals2.wholetone = [0, 2, 4, 6, 8, 10];
-})(Intervals || (Intervals = {}));
+var NoteNumbers = {
+  C0: 12,
+  Cs0: 13,
+  Db0: 13,
+  D0: 14,
+  Ds0: 15,
+  Eb0: 15,
+  E0: 16,
+  Es0: 17,
+  Fb0: 16,
+  F0: 17,
+  Fs0: 18,
+  Gb0: 18,
+  G0: 19,
+  Gs0: 20,
+  Ab0: 20,
+  A0: 21,
+  As0: 22,
+  Bb0: 22,
+  B0: 23,
+  Bs0: 24,
+  Cb1: 23,
+  C1: 24,
+  Cs1: 25,
+  Db1: 25,
+  D1: 26,
+  Ds1: 27,
+  Eb1: 27,
+  E1: 28,
+  Es1: 29,
+  Fb1: 28,
+  F1: 29,
+  Fs1: 30,
+  Gb1: 30,
+  G1: 31,
+  Gs1: 32,
+  Ab1: 32,
+  A1: 33,
+  As1: 34,
+  Bb1: 34,
+  B1: 35,
+  Bs1: 36,
+  Cb2: 35,
+  C2: 36,
+  Cs2: 37,
+  Db2: 37,
+  D2: 38,
+  Ds2: 39,
+  Eb2: 39,
+  E2: 40,
+  Es2: 41,
+  Fb2: 40,
+  F2: 41,
+  Fs2: 42,
+  Gb2: 42,
+  G2: 43,
+  Gs2: 44,
+  Ab2: 44,
+  A2: 45,
+  As2: 46,
+  Bb2: 46,
+  B2: 47,
+  Bs2: 48,
+  Cb3: 47,
+  C3: 48,
+  Cs3: 49,
+  Db3: 49,
+  D3: 50,
+  Ds3: 51,
+  Eb3: 51,
+  E3: 52,
+  Es3: 53,
+  Fb3: 52,
+  F3: 53,
+  Fs3: 54,
+  Gb3: 54,
+  G3: 55,
+  Gs3: 56,
+  Ab3: 56,
+  A3: 57,
+  As3: 58,
+  Bb3: 58,
+  B3: 59,
+  Bs3: 60,
+  Cb4: 59,
+  C4: 60,
+  Cs4: 61,
+  Db4: 61,
+  D4: 62,
+  Ds4: 63,
+  Eb4: 63,
+  E4: 64,
+  Es4: 65,
+  Fb4: 64,
+  F4: 65,
+  Fs4: 66,
+  Gb4: 66,
+  G4: 67,
+  Gs4: 68,
+  Ab4: 68,
+  A4: 69,
+  As4: 70,
+  Bb4: 70,
+  B4: 71,
+  Bs4: 72,
+  Cb5: 71,
+  C5: 72,
+  Cs5: 73,
+  Db5: 73,
+  D5: 74,
+  Ds5: 75,
+  Eb5: 75,
+  E5: 76,
+  Es5: 77,
+  Fb5: 76,
+  F5: 77,
+  Fs5: 78,
+  Gb5: 78,
+  G5: 79,
+  Gs5: 80,
+  Ab5: 80,
+  A5: 81,
+  As5: 82,
+  Bb5: 82,
+  B5: 83,
+  Bs5: 84,
+  Cb6: 83,
+  C6: 84,
+  Cs6: 85,
+  Db6: 85,
+  D6: 86,
+  Ds6: 87,
+  Eb6: 87,
+  E6: 88,
+  Es6: 89,
+  Fb6: 88,
+  F6: 89,
+  Fs6: 90,
+  Gb6: 90,
+  G6: 91,
+  Gs6: 92,
+  Ab6: 92,
+  A6: 93,
+  As6: 94,
+  Bb6: 94,
+  B6: 95,
+  Bs6: 96,
+  Cb7: 95,
+  C7: 96,
+  Cs7: 97,
+  Db7: 97,
+  D7: 98,
+  Ds7: 99,
+  Eb7: 99,
+  E7: 100,
+  Es7: 101,
+  Fb7: 100,
+  F7: 101,
+  Fs7: 102,
+  Gb7: 102,
+  G7: 103,
+  Gs7: 104,
+  Ab7: 104,
+  A7: 105,
+  As7: 106,
+  Bb7: 106,
+  B7: 107,
+  Bs7: 108,
+  Cb8: 107,
+  C8: 108,
+  Cs8: 109,
+  Db8: 109,
+  D8: 110,
+  Ds8: 111,
+  Eb8: 111,
+  E8: 112,
+  Es8: 113,
+  Fb8: 112,
+  F8: 113,
+  Fs8: 114,
+  Gb8: 114,
+  G8: 115,
+  Gs8: 116,
+  Ab8: 116,
+  A8: 117,
+  As8: 118,
+  Bb8: 118,
+  B8: 119,
+  Bs8: 120,
+  Cb9: 119,
+  C9: 120,
+  Cs9: 121,
+  Db9: 121,
+  D9: 122,
+  Ds9: 123,
+  Eb9: 123,
+  E9: 124,
+  Es9: 125,
+  Fb9: 124,
+  F9: 125,
+  Fs9: 126,
+  Gb9: 126,
+  G9: 127
+};
+var Intervals = {
+  maj: [0, 4, 7],
+  min: [0, 3, 7],
+  sus4: [0, 5, 7],
+  sus2: [0, 2, 7],
+  aug: [0, 4, 8],
+  dim: [0, 3, 6],
+  six: [9],
+  min7: [10],
+  maj7: [11],
+  add9: [14],
+  add11: [17],
+  add13: [19],
+  major: [0, 2, 4, 5, 7, 9, 11],
+  minor: [0, 2, 3, 5, 6, 8, 11],
+  harmonicmin: [0, 2, 3, 5, 7, 8, 11],
+  melodicmin: [0, 2, 3, 5, 7, 9, 11],
+  ionian: [0, 2, 4, 5, 7, 9, 11],
+  dorian: [0, 2, 3, 5, 7, 9, 10],
+  phrygian: [0, 1, 3, 5, 7, 8, 10],
+  lydian: [0, 2, 4, 6, 7, 9, 11],
+  mixolydian: [0, 2, 4, 5, 7, 9, 10],
+  aeolian: [0, 2, 3, 5, 7, 8, 10],
+  locrian: [0, 1, 3, 5, 6, 8, 10],
+  wholetone: [0, 2, 4, 6, 8, 10]
+};
 
 // src/mage.spell.ts
 var createSpell = (mage) => (props) => {
-  let { source, sequence, duration } = props;
+  const { source, sequence, duration } = props;
   let _isActivated = false;
   let _nextScheduleTime = 0;
   let _currentStep = 0;
   let loopCount = 0;
   const flatSteps = (steps2, value) => {
-    let result = [];
+    const result = [];
     steps2.forEach((step) => {
       if (step instanceof Array) {
         result.push(...flatSteps(step, value / step.length));

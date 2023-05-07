@@ -13,6 +13,7 @@
     "build": "tsc && npx ts-node build.ts",
     "lint": "eslint -f unix \"src/**/*.ts\"",
     "prepare": "npm run build",
+    "generate": "npx typedoc --out ./docs ./src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "millstones",
