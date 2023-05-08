@@ -18,15 +18,19 @@ import { Mage } from "./mage.types";
  * - timing - Current timing.
  *   - cycles - Current cycle count.
  *   - beats - Current beat count in cycle.
+ * - createSampler - Create sampler.
+ * - createSynth - Create synth.
+ * - getRandomInt - Get random integer.
  * - cast - Create spell and schedule it.
  *   - name - Name of spell.
  *   - props - Properties to create spell.
  *     - source - Sound source.
  *     - sequence - Function to create sequence of notes.
  *     - duration - Duration of spell in beat.
- * - useMetrognome - Enable metrognome sound.
+ * - useMetronome - Enable metrognome sound.
  */
-export declare const createMage: ({ tempo, beatsParCycle }: {
+export declare const createMage: ({ tempo, beatsParCycle, randomSeed, }: {
     tempo?: number | undefined;
     beatsParCycle?: number | undefined;
+    randomSeed?: number | undefined;
 }) => Mage;

@@ -1,18 +1,4 @@
-var __defProp = Object.defineProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
-
 // src/mage.const.ts
-var mage_const_exports = {};
-__export(mage_const_exports, {
-  FREQUENCY: () => FREQUENCY,
-  INTERVALS: () => INTERVALS,
-  MASTER_TUNE: () => MASTER_TUNE,
-  NOTE_NUMBERS: () => NOTE_NUMBERS,
-  WORK_INTERVAL: () => WORK_INTERVAL
-});
 var WORK_INTERVAL = 0.1;
 var MASTER_TUNE = 440;
 var FREQUENCY = Array(128).fill(void 0).map((_, i) => MASTER_TUNE * Math.pow(2, (i - 69) / 12));
@@ -378,13 +364,80 @@ var createSynth = (audioContext) => (oscillators = [{ type: "sawtooth", detune: 
   return { play };
 };
 
+// src/mage.sampler.ts
+var createSampler = (audioContext) => async (sourceUrls) => {
+  const promises = sourceUrls.map(async (url) => {
+    return fetch(url).then((response) => {
+      return response.arrayBuffer();
+    }).then(async (arrBuf) => {
+      const audioBuf = await audioContext.decodeAudioData(arrBuf);
+      return audioBuf;
+    });
+  });
+  const audioBuffers = await Promise.allSettled(promises).then(
+    (responses) => {
+      return responses.map(
+        (item) => item.status === "fulfilled" ? item.value : null
+      );
+    }
+  );
+  const play = (props) => {
+    const { noteNumber, startTime, duration, volume } = props;
+    const adsr = props.adsr ?? {
+      attack: 0,
+      decay: 0,
+      sustain: 1,
+      release: 0
+    };
+    const gain = createGainNode(audioContext)(
+      startTime,
+      volume,
+      duration,
+      adsr
+    );
+    const audioBuffer = audioContext.createBufferSource();
+    audioBuffer.buffer = audioBuffers[noteNumber];
+    if (audioBuffer.buffer != null) {
+      const bufferDuration = audioBuffer.buffer.duration;
+      gain.connect(audioContext.destination);
+      audioBuffer.connect(gain);
+      audioBuffer.start(startTime);
+      audioBuffer.stop(startTime + bufferDuration + adsr.release / 1e3);
+    }
+  };
+  return { play };
+};
+
 // src/mage.step.ts
 var createStep = (noteNumber, volume = 1, duration = 1) => {
   return { noteNumber, volume, duration };
 };
 
+// src/mage.utils.ts
+function* RNG(seed = 88675123) {
+  let x = 123456789;
+  let y = 362436069;
+  let z = 521288629;
+  let w = seed;
+  while (true) {
+    const t = x ^ x << 11;
+    x = y;
+    y = z;
+    z = w;
+    w = w ^ w >>> 19 ^ (t ^ t >>> 8);
+    yield (w + 2147483647) / 4294967296;
+  }
+}
+var getRandomInt = (generator) => (min = 0, max = 9) => {
+  return Math.floor(generator.next().value * (max + 1 - min)) + min;
+};
+
 // src/mage.ts
-var createMage = ({ tempo = 128, beatsParCycle = 8 }) => {
+var createMage = ({
+  tempo = 128,
+  beatsParCycle = 8,
+  randomSeed = 88675123
+}) => {
   const audioContext = new AudioContext();
   const beatLength = 60 / tempo;
   let beatCount = 0;
@@ -426,6 +479,9 @@ var createMage = ({ tempo = 128, beatsParCycle = 8 }) => {
     beatCount,
     start,
     stop,
+    createSampler: createSampler(audioContext),
+    createSynth: createSynth(audioContext),
+    getRandomInt: getRandomInt(RNG(randomSeed)),
     get timing() {
       return {
         cycles: Math.floor(beatCount / beatsParCycle),
@@ -446,7 +502,7 @@ var createMage = ({ tempo = 128, beatsParCycle = 8 }) => {
         spells.set(name, spell);
       }, delay);
     },
-    useMetrognome(enabled = true) {
+    useMetronome(enabled = true) {
       if (enabled) {
         const source = createSynth(this.audioContext)([
           {
@@ -466,13 +522,13 @@ var createMage = ({ tempo = 128, beatsParCycle = 8 }) => {
           sequence,
           duration
         });
-        this.cast("metrognome", {
+        this.cast("metronome", {
           source,
           sequence,
           duration
         });
       } else {
-        this.cast("metrognome", null);
+        this.cast("metronome", null);
       }
     }
   };
@@ -573,50 +629,6 @@ var findCloseBracketIndex = (bracket, pattern, startIndex) => {
   return -1;
 };
 
-// src/mage.sampler.ts
-var createSampler = (audioContext) => async (sourceUrls) => {
-  const promises = sourceUrls.map(async (url) => {
-    return fetch(url).then((response) => {
-      return response.arrayBuffer();
-    }).then(async (arrBuf) => {
-      const audioBuf = await audioContext.decodeAudioData(arrBuf);
-      return audioBuf;
-    });
-  });
-  const audioBuffers = await Promise.allSettled(promises).then(
-    (responses) => {
-      return responses.map(
-        (item) => item.status === "fulfilled" ? item.value : null
-      );
-    }
-  );
-  const play = (props) => {
-    const { noteNumber, startTime, duration, volume } = props;
-    const adsr = props.adsr ?? {
-      attack: 0,
-      decay: 0,
-      sustain: 1,
-      release: 0
-    };
-    const gain = createGainNode(audioContext)(
-      startTime,
-      volume,
-      duration,
-      adsr
-    );
-    const audioBuffer = audioContext.createBufferSource();
-    audioBuffer.buffer = audioBuffers[noteNumber];
-    if (audioBuffer.buffer != null) {
-      const bufferDuration = audioBuffer.buffer.duration;
-      gain.connect(audioContext.destination);
-      audioBuffer.connect(gain);
-      audioBuffer.start(startTime);
-      audioBuffer.stop(startTime + bufferDuration + adsr.release / 1e3);
-    }
-  };
-  return { play };
-};
-
 // src/mage.scale.ts
 var createScale = (rootNoteNumber, ...chordIntervals) => {
   const intervals = new Set(chordIntervals.flat().flat());
@@ -630,35 +642,15 @@ var getRootNotes = (scales) => {
   return scales.map((scale) => scale[0]);
 };
 
-// src/mage.utils.ts
-function* RNG(seed = 88675123) {
-  let x = 123456789;
-  let y = 362436069;
-  let z = 521288629;
-  let w = seed;
-  while (true) {
-    const t = x ^ x << 11;
-    x = y;
-    y = z;
-    z = w;
-    w = w ^ w >>> 19 ^ (t ^ t >>> 8);
-    yield (w + 2147483647) / 4294967296;
-  }
-}
-var getRandomInt = (generator) => (min = 0, max = 9) => {
-  return Math.floor(generator.next().value * (max + 1 - min)) + min;
-};
-
 // src/index.ts
 var src_default = createMage;
 export {
+  INTERVALS,
+  NOTE_NUMBERS,
   RNG,
-  mage_const_exports as constant,
-  createSampler,
   createScale,
   createSequence,
   createStep,
-  createSynth,
   src_default as default,
   getRandomInt,
   getRootNotes

@@ -18,7 +18,14 @@ export type Mage = {
     stop: () => void;
     spells: Map<string, Spell>;
     beatCount: number;
-    useMetrognome: (enabled: boolean) => void;
+    createSampler: (sourceUrls: string[]) => Promise<Source>;
+    createSynth: (oscillators?: {
+        type: OscillatorType;
+        detune: number;
+        semitone: number;
+    }[]) => Source;
+    getRandomInt: (min: number, max: number) => number;
+    useMetronome: (enabled: boolean) => void;
 };
 export type Spell = {
     isActivated: boolean;
