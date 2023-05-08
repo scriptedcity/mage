@@ -4,7 +4,7 @@ export const FREQUENCY: number[] = Array(128)
   .fill(undefined)
   .map((_, i) => MASTER_TUNE * Math.pow(2, (i - 69) / 12));
 
-export const NoteNumbers = {
+export const NOTE_NUMBERS = {
   C0: 12,
   Cs0: 13,
   Db0: 13,
@@ -208,7 +208,7 @@ export const NoteNumbers = {
   Gb9: 126,
   G9: 127,
 };
-export const Intervals = {
+export const INTERVALS = {
   maj: [0, 4, 7],
   min: [0, 3, 7],
   sus4: [0, 5, 7],

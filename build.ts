@@ -1,23 +1,11 @@
 const { build } = require("esbuild");
 
-const entryFile = "src/index.ts";
-const option = {
+build({
   bundle: true,
-  entryPoints: [entryFile],
+  entryPoints: ["src/index.ts"],
   minify: false,
   sourcemap: false,
-};
-
-build({
-  ...option,
   format: "esm",
-  outfile: "./dist/index.esm.js",
-  target: ["ESNext"],
-});
-
-build({
-  ...option,
-  format: "cjs",
-  outfile: "./dist/index.cjs.js",
+  outfile: "./dist/index.js",
   target: ["ESNext"],
 });

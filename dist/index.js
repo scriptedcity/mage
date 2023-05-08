@@ -1,51 +1,22 @@
-"use strict";
 var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames = Object.getOwnPropertyNames;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
 };
-var __copyProps = (to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
-  }
-  return to;
-};
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-
-// src/index.ts
-var src_exports = {};
-__export(src_exports, {
-  RNG: () => RNG,
-  constant: () => mage_const_exports,
-  createSampler: () => createSampler,
-  createScale: () => createScale,
-  createSequence: () => createSequence,
-  createStep: () => createStep,
-  createSynth: () => createSynth,
-  default: () => src_default,
-  getRandomInt: () => getRandomInt,
-  getRootNotes: () => getRootNotes
-});
-module.exports = __toCommonJS(src_exports);
 
 // src/mage.const.ts
 var mage_const_exports = {};
 __export(mage_const_exports, {
   FREQUENCY: () => FREQUENCY,
-  Intervals: () => Intervals,
+  INTERVALS: () => INTERVALS,
   MASTER_TUNE: () => MASTER_TUNE,
-  NoteNumbers: () => NoteNumbers,
+  NOTE_NUMBERS: () => NOTE_NUMBERS,
   WORK_INTERVAL: () => WORK_INTERVAL
 });
 var WORK_INTERVAL = 0.1;
 var MASTER_TUNE = 440;
 var FREQUENCY = Array(128).fill(void 0).map((_, i) => MASTER_TUNE * Math.pow(2, (i - 69) / 12));
-var NoteNumbers = {
+var NOTE_NUMBERS = {
   C0: 12,
   Cs0: 13,
   Db0: 13,
@@ -249,7 +220,7 @@ var NoteNumbers = {
   Gb9: 126,
   G9: 127
 };
-var Intervals = {
+var INTERVALS = {
   maj: [0, 4, 7],
   min: [0, 3, 7],
   sus4: [0, 5, 7],
@@ -285,13 +256,17 @@ var createSpell = (mage) => (props) => {
   let loopCount = 0;
   const flatSteps = (steps2, value) => {
     const result = [];
-    steps2.forEach((step) => {
-      if (step instanceof Array) {
-        result.push(...flatSteps(step, value / step.length));
-      } else {
-        result.push({ step, value });
-      }
-    });
+    try {
+      steps2.forEach((step) => {
+        if (step instanceof Array) {
+          result.push(...flatSteps(step, value / step.length));
+        } else {
+          result.push({ step, value });
+        }
+      });
+    } catch (e) {
+      console.log(e);
+    }
     return result;
   };
   const tempSteps = sequence({ ...mage.timing, loopCount });
@@ -482,7 +457,7 @@ var createMage = ({ tempo = 128, beatsParCycle = 8 }) => {
         ]);
         const sequence = ({ beats }) => {
           return [
-            createStep(beats === 0 ? NoteNumbers.A6 : NoteNumbers.A5, 1, 0.2)
+            createStep(beats === 0 ? NOTE_NUMBERS.A6 : NOTE_NUMBERS.A5, 1, 0.2)
           ];
         };
         const duration = 1;
@@ -676,3 +651,15 @@ var getRandomInt = (generator) => (min = 0, max = 9) => {
 
 // src/index.ts
 var src_default = createMage;
+export {
+  RNG,
+  mage_const_exports as constant,
+  createSampler,
+  createScale,
+  createSequence,
+  createStep,
+  createSynth,
+  src_default as default,
+  getRandomInt,
+  getRootNotes
+};

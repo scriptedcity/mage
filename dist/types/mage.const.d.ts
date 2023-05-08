@@ -1,7 +1,7 @@
 export declare const WORK_INTERVAL = 0.1;
 export declare const MASTER_TUNE = 440;
 export declare const FREQUENCY: number[];
-export declare const NoteNumbers: {
+export declare const NOTE_NUMBERS: {
     C0: number;
     Cs0: number;
     Db0: number;
@@ -205,7 +205,7 @@ export declare const NoteNumbers: {
     Gb9: number;
     G9: number;
 };
-export declare const Intervals: {
+export declare const INTERVALS: {
     maj: number[];
     min: number[];
     sus4: number[];

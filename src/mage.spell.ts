@@ -33,13 +33,17 @@ const createSpell =
 
     const flatSteps = (steps: Steps, value: number) => {
       const result: { step: Step | null; value: number }[] = [];
-      steps.forEach((step) => {
-        if (step instanceof Array) {
-          result.push(...flatSteps(step, value / step.length));
-        } else {
-          result.push({ step, value });
-        }
-      });
+      try {
+        steps.forEach((step) => {
+          if (step instanceof Array) {
+            result.push(...flatSteps(step, value / step.length));
+          } else {
+            result.push({ step, value });
+          }
+        });
+      } catch (e) {
+        console.log(e);
+      }
       return result;
     };
     const tempSteps = sequence({ ...mage.timing, loopCount });

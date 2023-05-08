@@ -18,7 +18,7 @@ export type Mage = {
   stop: () => void;
   spells: Map<string, Spell>;
   beatCount: number;
-  useMetrognome: (enabled: boolean) => void;
+  useMetronome: (enabled: boolean) => void;
 };
 
 export type Spell = {

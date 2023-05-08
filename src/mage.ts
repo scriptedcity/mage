@@ -2,7 +2,7 @@ import { Mage, Spell, Sequence } from "./mage.types";
 import createSpell from "./mage.spell";
 import { createSynth } from "./mage.synth";
 import { createStep } from "./mage.step";
-import { WORK_INTERVAL, NoteNumbers } from "./mage.const";
+import { WORK_INTERVAL, NOTE_NUMBERS } from "./mage.const";
 
 /**
  * Create mage.
@@ -102,7 +102,7 @@ export const createMage = ({ tempo = 128, beatsParCycle = 8 }): Mage => {
         spells.set(name, spell);
       }, delay);
     },
-    useMetrognome(enabled = true) {
+    useMetronome(enabled = true) {
       if (enabled) {
         const source = createSynth(this.audioContext)([
           {
@@ -113,7 +113,7 @@ export const createMage = ({ tempo = 128, beatsParCycle = 8 }): Mage => {
         ]);
         const sequence: Sequence = ({ beats }) => {
           return [
-            createStep(beats === 0 ? NoteNumbers.A6 : NoteNumbers.A5, 1, 0.2),
+            createStep(beats === 0 ? NOTE_NUMBERS.A6 : NOTE_NUMBERS.A5, 1, 0.2),
           ];
         };
         const duration = 1;
@@ -122,13 +122,13 @@ export const createMage = ({ tempo = 128, beatsParCycle = 8 }): Mage => {
           sequence,
           duration,
         });
-        this.cast("metrognome", {
+        this.cast("metronome", {
           source,
           sequence,
           duration,
         });
       } else {
-        this.cast("metrognome", null);
+        this.cast("metronome", null);
       }
     },
   };
