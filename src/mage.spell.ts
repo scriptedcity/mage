@@ -5,8 +5,6 @@ import { WORK_INTERVAL } from "./mage.const";
  * Create spell.
  * Spell has a sequence of notes, sound source and its duration.
  * All notes in sequence will be played in the equal interval.
-
- *
  *
  * @param mage - Mage object.
  * @param props - Properties to create spell.

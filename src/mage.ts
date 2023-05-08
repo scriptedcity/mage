@@ -1,7 +1,9 @@
 import { Mage, Spell, Sequence } from "./mage.types";
 import createSpell from "./mage.spell";
 import { createSynth } from "./mage.synth";
+import { createSampler } from "./mage.sampler";
 import { createStep } from "./mage.step";
+import { getRandomInt, RNG } from "./mage.utils";
 import { WORK_INTERVAL, NOTE_NUMBERS } from "./mage.const";
 
 /**
@@ -23,16 +25,23 @@ import { WORK_INTERVAL, NOTE_NUMBERS } from "./mage.const";
  * - timing - Current timing.
  *   - cycles - Current cycle count.
  *   - beats - Current beat count in cycle.
+ * - createSampler - Create sampler.
+ * - createSynth - Create synth.
+ * - getRandomInt - Get random integer.
  * - cast - Create spell and schedule it.
  *   - name - Name of spell.
  *   - props - Properties to create spell.
  *     - source - Sound source.
  *     - sequence - Function to create sequence of notes.
  *     - duration - Duration of spell in beat.
- * - useMetrognome - Enable metrognome sound.
+ * - useMetronome - Enable metrognome sound.
  */
 
-export const createMage = ({ tempo = 128, beatsParCycle = 8 }): Mage => {
+export const createMage = ({
+  tempo = 128,
+  beatsParCycle = 8,
+  randomSeed = 88675123,
+}): Mage => {
   const audioContext = new AudioContext();
   const beatLength = 60 / tempo;
   let beatCount = 0;
@@ -81,6 +90,9 @@ export const createMage = ({ tempo = 128, beatsParCycle = 8 }): Mage => {
     beatCount,
     start,
     stop,
+    createSampler: createSampler(audioContext),
+    createSynth: createSynth(audioContext),
+    getRandomInt: getRandomInt(RNG(randomSeed)),
     get timing() {
       return {
         cycles: Math.floor(beatCount / beatsParCycle),
