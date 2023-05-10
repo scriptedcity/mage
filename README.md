@@ -4,12 +4,12 @@ Breaking changes will occur without any notices.
 
 # Mage
 
-Making music with JavaScript codes.
+Making music, generated buy JavaScript codes.
 
 ## Usage
 
 ```shell
-npm install -D @millstones/mage
+npm install @millstones/mage
 ```
 
 ## Documents
