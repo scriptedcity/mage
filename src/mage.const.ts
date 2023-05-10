@@ -1,9 +1,24 @@
+/**
+ * `WORK_INTERVAL` is a constant that defines a standard duration (in seconds) for a work interval.
+ */
 export const WORK_INTERVAL = 0.1;
+
+/**
+ * `MASTER_TUNE` is a constant that defines the base frequency (in Hz) for the A4 note, often used as a tuning reference in music.
+ */
 export const MASTER_TUNE = 440;
+/**
+ * `FREQUENCY` is an array that represents the frequencies (in Hz) of all the 128 MIDI note numbers.
+ * It's calculated based on the 12-TET (Twelve-tone equal temperament) tuning system, using the `MASTER_TUNE` constant as the frequency of the A4 note.
+ */
 export const FREQUENCY: number[] = Array(128)
   .fill(undefined)
   .map((_, i) => MASTER_TUNE * Math.pow(2, (i - 69) / 12));
 
+/**
+ * `NOTE_NUMBERS` is an object that maps the names of musical notes in various octaves to their corresponding MIDI note numbers.
+ * The note names include all the naturals (A to G), as well as sharps (notated as 's') and flats (notated as 'b'), spanning from C0 to G9.
+ */
 export const NOTE_NUMBERS = {
   C0: 12,
   Cs0: 13,
@@ -208,6 +223,12 @@ export const NOTE_NUMBERS = {
   Gb9: 126,
   G9: 127,
 };
+
+/**
+ * `INTERVALS` is an object that maps various musical interval and scale names to their corresponding pitch class sets.
+ * These sets are represented as arrays of integers, each integer being the distance in semitones from the root note of the interval or scale.
+ * For example, the major triad ('maj') is represented as [0, 4, 7], meaning that it consists of the root note, a note 4 semitones above the root, and a note 7 semitones above the root.
+ */
 export const INTERVALS = {
   maj: [0, 4, 7],
   min: [0, 3, 7],

@@ -1,19 +1,26 @@
 import { Steps } from "./mage.types";
 
 /**
- * Create sequence from pattern.
- * Pattern is a string of hexadecimal numbers, and some special characters.
- * - 0-9, a-f: note
- * - .: repeat last note
- * - ?: random note - The note will be selected randomly from the all scale notes.
- * - -: tie - The duration of the previous note will be extended.
- * - []: tuplet - All notes in the same bracket will be played in the equal duration.
- * - Curly bracket: chord - All notes in the same bracket are played at the same time.
+ * `createSequence` is a function that generates a sequence of musical Steps based on a given pattern.
  *
- * @param rng - random number generator
- * @param scale - scale
- * @param pattern - pattern
- * @returns Steps
+ * @param rng - A function that generates a random number between a specified range (min, max).
+ * @returns A higher order function that:
+ * - Accepts a `scale`, an array of note numbers representing a musical scale.
+ * - Returns another function that:
+ *   - Accepts a `pattern`, a string that represents the sequence of notes and musical expressions.
+ *   - `duration` (optional), the duration of each note in the pattern. Default is 1.
+ *   - `volume` (optional), the volume of each note in the pattern. Default is 1.
+ *   - `ignoreMarks` (optional), a boolean flag to determine whether to ignore special characters in the pattern. Default is false.
+ *   - Returns a `Steps` array, each element of which corresponds to a Step in the sequence.
+ *
+ * The `pattern` string is a series of characters, each representing a musical operation:
+ * - A hexadecimal number (0-F) represents a note from the scale.
+ * - A space ' ' represents a rest.
+ * - A period '.' represents a repeat of the previous note.
+ * - A question mark '?' represents a random note from the scale.
+ * - A dash '-' represents a tie, which extends the duration of the previous note.
+ * - Square brackets '[]' represent a tuplet, a group of notes that are played in the duration normally occupied by a different number.
+ * - Curly braces '{}' represent a chord, a group of notes that are played simultaneously.
  */
 export const createSequence =
   (rng: (min: number, max: number) => number) =>
@@ -113,6 +120,15 @@ export const createSequence =
 
 const bracketPairs = { "[": "]", "{": "}" };
 
+/**
+ * `findCloseBracketIndex` is a function that finds the index of the closing bracket for a given opening bracket in a string.
+ *
+ * @param bracket - The opening bracket character to find the corresponding closing bracket for.
+ * @param pattern - The string in which to search for the closing bracket.
+ * @param startIndex - The index at which to start searching for the closing bracket.
+ *
+ * @returns The index of the closing bracket in the string. If no closing bracket is found, it returns -1.
+ */
 const findCloseBracketIndex = (
   bracket: keyof typeof bracketPairs,
   pattern: string,

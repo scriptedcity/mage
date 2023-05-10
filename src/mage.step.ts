@@ -1,22 +1,17 @@
 import { Step } from "./mage.types";
 
 /**
- * Create a step object.
+ * `createStep` is a function that creates a Step object.
+ * A Step object represents a musical note or chord with a specific volume and duration.
  *
- * @param noteNumber - Note number(s) to play.
- *  - If it is an array, it will be played in parallel.
- * @param volume - Volume of note.
- * @param duration - Duration of note.
- * @returns Step object.
- * @example
- * ```ts
- * // play note 60 with volume 0.5 and duration 0.5
- * const step = createStep(60, 0.5, 0.5);
- * ```
- * ```ts
- * // play note 60, 62, 64 at the same time with volume 0.5 and duration 0.5
- * const step = createStep([60, 62, 64], 0.5, 0.5);
- * ```
+ * @param noteNumber - The MIDI note number or an array of MIDI note numbers. If an array is provided, it represents a chord.
+ * @param volume - The volume of the note or chord (0-1). Default is 1.
+ * @param duration - The duration of the note or chord in beats. Default is 1.
+ *
+ * @returns A Step object that has the following properties:
+ * - `noteNumber` - The MIDI note number or an array of MIDI note numbers.
+ * - `volume` - The volume of the note or chord.
+ * - `duration` - The duration of the note or chord in beats.
  */
 export const createStep = (
   noteNumber: number | number[],

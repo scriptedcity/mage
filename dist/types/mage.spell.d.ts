@@ -1,24 +1,24 @@
 import { Mage, Sound, Sequence } from "./mage.types";
 /**
- * Create spell.
- * Spell has a sequence of notes, sound source and its duration.
- * All notes in sequence will be played in the equal interval.
+ * `createSpell` is a function that creates a Spell object.
+ * A Spell object represents a piece of music that can be activated, scheduled, and contains its own sound and sequence.
  *
- * @param mage - Mage object.
- * @param props - Properties to create spell.
- * - source - Sound source.
- * - sequence - Function to create sequence of notes.
- *   - The function will be called each cycle with mage timing and loop count.
- * - duration - Duration of spell in beat.
- * @returns functions to create spell.
- * - isActivated - Whether spell is activated.
- *   If true, spell will be scheduled.
+ * @param mage - The Mage object which the Spell will be bound to.
+ * @param props - Properties to create Spell.
+ * - `sound` - A Sound object which defines the sound of the Spell.
+ * - `sequence` - A Sequence function that generates a sequence of Steps.
+ * - `duration` - The duration of the Spell in beats.
  *
- * - nextScheduleTime - Next schedule time.
- * - currentStep - Current step of sequence.
- * - schedule - Schedule notes.
+ * @returns A Spell object that has the following properties and methods:
+ * - `isActivated` - A getter and setter to check and set if the Spell is activated.
+ * - `nextScheduleTime` - A getter and setter to get and set the next schedule time of the Spell.
+ * - `currentStep` - A getter to get the current step index of the Spell.
+ * - `schedule` - A method to schedule the Spell.
+ * - `sound` - A Sound object which defines the sound of the Spell.
+ * - `sequence` - A Sequence function that generates a sequence of Steps.
+ * - `duration` - The duration of the Spell in beats.
  */
-declare const createSpell: (mage: Mage) => (props: {
+export declare const createSpell: (mage: Mage) => (props: {
     sound: Sound;
     sequence: Sequence;
     duration: number;
@@ -31,4 +31,3 @@ declare const createSpell: (mage: Mage) => (props: {
     sequence: Sequence;
     duration: number;
 };
-export default createSpell;

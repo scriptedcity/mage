@@ -307,7 +307,6 @@ var createSpell = (mage) => (props) => {
     duration
   };
 };
-var mage_spell_default = createSpell;
 
 // src/mage.gain.ts
 var createGainNode = (audioContext) => (startTime, baseGain, duration, adsr) => {
@@ -496,7 +495,7 @@ var createMage = ({
         }, delay);
         return;
       }
-      const spell = mage_spell_default(this)(props);
+      const spell = createSpell(this)(props);
       window.setTimeout(() => {
         spells.set(name, spell);
       }, delay);
@@ -641,11 +640,9 @@ var src_default = createMage;
 export {
   INTERVALS,
   NOTE_NUMBERS,
-  RNG,
   createScale,
   createSequence,
   createStep,
   src_default as default,
-  getRandomInt,
   getRootNotes
 };

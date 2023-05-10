@@ -1,22 +1,18 @@
 /**
- * Calculates the duration of a beat in seconds.
- * @param tempo - Tempo in beats per minute.
- * @param beats - Number of beats.
- * @returns Duration of beat in seconds.
- */
-export declare const calcBeatDuration: (tempo: number, beats?: number) => number;
-/**
- * Generates random number.
- * @param seed - Seed.
- * @returns Random number generator.
- * @see https://en.wikipedia.org/wiki/Xorshift
+ * `RNG` is a generator function that produces a sequence of random numbers based on a given seed using
+ * the xorshift algorithm.
+ *
+ * @param seed - The seed for the random number generator (default is 88675123).
+ *
+ * @returns A sequence of random numbers between 0 and 1.
  */
 export declare function RNG(seed?: number): Generator<number, void, unknown>;
 /**
- * Generates random integer.
- * @param generator - Random number generator.
- * @param min - Minimum value.
- * @param max - Maximum value.
- * @returns Random integer between min and max.
+ * `getRandomInt` is a function that returns a function for generating random integers within a specified range
+ * using a given random number generator.
+ *
+ * @param generator - The generator to use for random number generation.
+ *
+ * @returns A function that takes two parameters, `min` and `max`, and generates a random integer within that range.
  */
 export declare const getRandomInt: (generator: Generator) => (min?: number, max?: number) => number;
