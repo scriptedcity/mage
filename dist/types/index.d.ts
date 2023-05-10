@@ -1,6 +1,6 @@
-declare const _default: ({ tempo, beatsParCycle, randomSeed, }: {
+declare const _default: ({ tempo, beatsPerCycle, randomSeed, }: {
     tempo?: number | undefined;
-    beatsParCycle?: number | undefined;
+    beatsPerCycle?: number | undefined;
     randomSeed?: number | undefined;
 }) => import("./mage.types").Mage;
 export default _default;

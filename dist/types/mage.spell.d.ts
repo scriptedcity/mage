@@ -1,4 +1,4 @@
-import { Mage, Source, Sequence } from "./mage.types";
+import { Mage, Sound, Sequence } from "./mage.types";
 /**
  * Create spell.
  * Spell has a sequence of notes, sound source and its duration.
@@ -19,7 +19,7 @@ import { Mage, Source, Sequence } from "./mage.types";
  * - schedule - Schedule notes.
  */
 declare const createSpell: (mage: Mage) => (props: {
-    source: Source;
+    sound: Sound;
     sequence: Sequence;
     duration: number;
 }) => {
@@ -27,7 +27,7 @@ declare const createSpell: (mage: Mage) => (props: {
     nextScheduleTime: number;
     readonly currentStep: number;
     schedule: (currentTime: number, beatLength: number) => void;
-    source: Source;
+    sound: Sound;
     sequence: Sequence;
     duration: number;
 };

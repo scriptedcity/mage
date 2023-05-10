@@ -6,11 +6,11 @@ export type Timing = {
 export type Mage = {
     audioContext: AudioContext;
     tempo: number;
-    beatsParCycle: number;
+    beatsPerCycle: number;
     beatLength: number;
     readonly timing: Pick<Timing, "cycles" | "beats">;
     cast: (name: string, props: {
-        source: Source;
+        sound: Sound;
         sequence: Sequence;
         duration: number;
     } | null) => void;
@@ -32,7 +32,7 @@ export type Spell = {
     nextScheduleTime: number;
     readonly currentStep: number;
     schedule: (currentTime: number, beatLength: number) => void;
-    source: Source;
+    sound: Sound;
     sequence: Sequence;
     duration: number;
 };
@@ -49,6 +49,7 @@ export type Envelope = {
     sustain: number;
     release: number;
 };
+export type Sound = (timing: Timing) => Source;
 export type Source = {
     play: (props: {
         noteNumber: number;

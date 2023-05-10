@@ -1,4 +1,4 @@
-import { Mage, Source, Sequence, Steps, Step } from "./mage.types";
+import { Mage, Sound, Sequence, Steps, Step } from "./mage.types";
 import { WORK_INTERVAL } from "./mage.const";
 
 /**
@@ -22,8 +22,8 @@ import { WORK_INTERVAL } from "./mage.const";
  */
 const createSpell =
   (mage: Mage) =>
-  (props: { source: Source; sequence: Sequence; duration: number }) => {
-    const { source, sequence, duration } = props;
+  (props: { sound: Sound; sequence: Sequence; duration: number }) => {
+    const { sound, sequence, duration } = props;
     let _isActivated = false;
     let _nextScheduleTime = 0;
     let _currentStep = 0;
@@ -55,7 +55,7 @@ const createSpell =
         const { step, value } = steps[_currentStep];
         if (step) {
           [step.noteNumber].flat().forEach((noteNumber) => {
-            source.play({
+            sound({ ...mage.timing, loopCount }).play({
               noteNumber,
               startTime: _nextScheduleTime,
               volume: step.volume ?? 1,
@@ -95,7 +95,7 @@ const createSpell =
         return _currentStep;
       },
       schedule,
-      source,
+      sound,
       sequence,
       duration,
     };

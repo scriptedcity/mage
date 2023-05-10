@@ -29,8 +29,8 @@ import { Mage } from "./mage.types";
  *     - duration - Duration of spell in beat.
  * - useMetronome - Enable metrognome sound.
  */
-export declare const createMage: ({ tempo, beatsParCycle, randomSeed, }: {
+export declare const createMage: ({ tempo, beatsPerCycle, randomSeed, }: {
     tempo?: number | undefined;
-    beatsParCycle?: number | undefined;
+    beatsPerCycle?: number | undefined;
     randomSeed?: number | undefined;
 }) => Mage;

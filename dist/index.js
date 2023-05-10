@@ -235,7 +235,7 @@ var INTERVALS = {
 
 // src/mage.spell.ts
 var createSpell = (mage) => (props) => {
-  const { source, sequence, duration } = props;
+  const { sound, sequence, duration } = props;
   let _isActivated = false;
   let _nextScheduleTime = 0;
   let _currentStep = 0;
@@ -265,7 +265,7 @@ var createSpell = (mage) => (props) => {
       const { step, value } = steps[_currentStep];
       if (step) {
         [step.noteNumber].flat().forEach((noteNumber) => {
-          source.play({
+          sound({ ...mage.timing, loopCount }).play({
             noteNumber,
             startTime: _nextScheduleTime,
             volume: step.volume ?? 1,
@@ -302,7 +302,7 @@ var createSpell = (mage) => (props) => {
       return _currentStep;
     },
     schedule,
-    source,
+    sound,
     sequence,
     duration
   };
@@ -435,7 +435,7 @@ var getRandomInt = (generator) => (min = 0, max = 9) => {
 // src/mage.ts
 var createMage = ({
   tempo = 128,
-  beatsParCycle = 8,
+  beatsPerCycle = 8,
   randomSeed = 88675123
 }) => {
   const audioContext = new AudioContext();
@@ -445,7 +445,7 @@ var createMage = ({
   let nextScheduleTime = 0;
   const schedule = () => {
     while (audioContext.currentTime + WORK_INTERVAL > nextScheduleTime) {
-      if (beatCount % beatsParCycle === 0) {
+      if (beatCount % beatsPerCycle === 0) {
         console.log("---------------------");
         spells.forEach((spell) => {
           if (!spell.isActivated) {
@@ -473,7 +473,7 @@ var createMage = ({
   return {
     audioContext,
     tempo,
-    beatsParCycle,
+    beatsPerCycle,
     beatLength,
     spells,
     beatCount,
@@ -484,13 +484,12 @@ var createMage = ({
     getRandomInt: getRandomInt(RNG(randomSeed)),
     get timing() {
       return {
-        cycles: Math.floor(beatCount / beatsParCycle),
-        beats: beatCount % beatsParCycle
+        cycles: Math.floor(beatCount / beatsPerCycle),
+        beats: beatCount % beatsPerCycle
       };
     },
     cast(name, props) {
-      const delay = beatLength * (beatsParCycle - beatCount % beatsParCycle) * 1e3 - 50;
-      console.log({ delay, beat: beatCount % beatsParCycle });
+      const delay = beatLength * (beatsPerCycle - beatCount % beatsPerCycle) * 1e3 - 50;
       if (props == null) {
         window.setTimeout(() => {
           spells.delete(name);
@@ -504,7 +503,7 @@ var createMage = ({
     },
     useMetronome(enabled = true) {
       if (enabled) {
-        const source = createSynth(this.audioContext)([
+        const sound = () => createSynth(this.audioContext)([
           {
             type: "square",
             detune: 0,
@@ -517,13 +516,8 @@ var createMage = ({
           ];
         };
         const duration = 1;
-        console.log({
-          source,
-          sequence,
-          duration
-        });
         this.cast("metronome", {
-          source,
+          sound,
           sequence,
           duration
         });

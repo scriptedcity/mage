@@ -39,7 +39,7 @@ import { WORK_INTERVAL, NOTE_NUMBERS } from "./mage.const";
 
 export const createMage = ({
   tempo = 128,
-  beatsParCycle = 8,
+  beatsPerCycle = 8,
   randomSeed = 88675123,
 }): Mage => {
   const audioContext = new AudioContext();
@@ -52,7 +52,7 @@ export const createMage = ({
   let nextScheduleTime = 0;
   const schedule = () => {
     while (audioContext.currentTime + WORK_INTERVAL > nextScheduleTime) {
-      if (beatCount % beatsParCycle === 0) {
+      if (beatCount % beatsPerCycle === 0) {
         console.log("---------------------");
         //activate spell
         spells.forEach((spell) => {
@@ -84,7 +84,7 @@ export const createMage = ({
   return {
     audioContext,
     tempo,
-    beatsParCycle,
+    beatsPerCycle,
     beatLength,
     spells,
     beatCount,
@@ -95,14 +95,13 @@ export const createMage = ({
     getRandomInt: getRandomInt(RNG(randomSeed)),
     get timing() {
       return {
-        cycles: Math.floor(beatCount / beatsParCycle),
-        beats: beatCount % beatsParCycle,
+        cycles: Math.floor(beatCount / beatsPerCycle),
+        beats: beatCount % beatsPerCycle,
       };
     },
     cast(name, props) {
       const delay =
-        beatLength * (beatsParCycle - (beatCount % beatsParCycle)) * 1000 - 50;
-      console.log({ delay, beat: beatCount % beatsParCycle });
+        beatLength * (beatsPerCycle - (beatCount % beatsPerCycle)) * 1000 - 50;
       if (props == null) {
         window.setTimeout(() => {
           spells.delete(name);
@@ -116,26 +115,22 @@ export const createMage = ({
     },
     useMetronome(enabled = true) {
       if (enabled) {
-        const source = createSynth(this.audioContext)([
-          {
-            type: "square",
-            detune: 0,
-            semitone: 0,
-          },
-        ]);
+        const sound = () =>
+          createSynth(this.audioContext)([
+            {
+              type: "square",
+              detune: 0,
+              semitone: 0,
+            },
+          ]);
         const sequence: Sequence = ({ beats }) => {
           return [
             createStep(beats === 0 ? NOTE_NUMBERS.A6 : NOTE_NUMBERS.A5, 1, 0.2),
           ];
         };
         const duration = 1;
-        console.log({
-          source,
-          sequence,
-          duration,
-        });
         this.cast("metronome", {
-          source,
+          sound,
           sequence,
           duration,
         });
