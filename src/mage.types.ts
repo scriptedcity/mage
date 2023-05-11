@@ -18,11 +18,19 @@ export type Mage = {
   stop: () => void;
   spells: Map<string, Spell>;
   beatCount: number;
+  getRandomInt: (min: number, max: number) => number;
   createSampler: (sourceUrls: string[]) => Promise<Source>;
   createSynth: (
     oscillators?: { type: OscillatorType; detune: number; semitone: number }[]
   ) => Source;
-  getRandomInt: (min: number, max: number) => number;
+  createSequence: (
+    scale: number[]
+  ) => (
+    pattern: string,
+    duration?: number,
+    volume?: number,
+    ignoreMarks?: boolean
+  ) => Steps;
   useMetronome: (enabled: boolean) => void;
 };
 

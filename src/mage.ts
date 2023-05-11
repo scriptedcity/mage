@@ -3,6 +3,7 @@ import { createSpell } from "./mage.spell";
 import { createSynth } from "./mage.synth";
 import { createSampler } from "./mage.sampler";
 import { createStep } from "./mage.step";
+import { createSequence } from "./mage.sequence";
 import { getRandomInt, RNG } from "./mage.utils";
 import { WORK_INTERVAL, NOTE_NUMBERS } from "./mage.const";
 
@@ -82,6 +83,8 @@ export const createMage = ({
   const stop = () => clearInterval(timer);
   start();
 
+  const rng = getRandomInt(RNG(randomSeed));
+
   return {
     audioContext,
     tempo,
@@ -91,9 +94,10 @@ export const createMage = ({
     beatCount,
     start,
     stop,
+    getRandomInt: rng,
     createSampler: createSampler(audioContext),
     createSynth: createSynth(audioContext),
-    getRandomInt: getRandomInt(RNG(randomSeed)),
+    createSequence: createSequence(rng),
     get timing() {
       return {
         cycles: Math.floor(beatCount / beatsPerCycle),
