@@ -412,121 +412,6 @@ var createStep = (noteNumber, volume = 1, duration = 1) => {
   return { noteNumber, volume, duration };
 };
 
-// src/mage.utils.ts
-function* RNG(seed = 88675123) {
-  let x = 123456789;
-  let y = 362436069;
-  let z = 521288629;
-  let w = seed;
-  while (true) {
-    const t = x ^ x << 11;
-    x = y;
-    y = z;
-    z = w;
-    w = w ^ w >>> 19 ^ (t ^ t >>> 8);
-    yield (w + 2147483647) / 4294967296;
-  }
-}
-var getRandomInt = (generator) => (min = 0, max = 9) => {
-  return Math.floor(generator.next().value * (max + 1 - min)) + min;
-};
-
-// src/mage.ts
-var createMage = ({
-  tempo = 128,
-  beatsPerCycle = 8,
-  randomSeed = 88675123
-}) => {
-  const audioContext = new AudioContext();
-  const beatLength = 60 / tempo;
-  let beatCount = 0;
-  const spells = /* @__PURE__ */ new Map();
-  let nextScheduleTime = 0;
-  const schedule = () => {
-    while (audioContext.currentTime + WORK_INTERVAL > nextScheduleTime) {
-      if (beatCount % beatsPerCycle === 0) {
-        console.log("---------------------");
-        spells.forEach((spell) => {
-          if (!spell.isActivated) {
-            spell.isActivated = true;
-            spell.nextScheduleTime = nextScheduleTime;
-          }
-        });
-      }
-      console.log({
-        beatCount
-      });
-      beatCount++;
-      nextScheduleTime += beatLength;
-    }
-    spells.forEach((spell) => {
-      spell.schedule(audioContext.currentTime, beatLength);
-    });
-  };
-  let timer;
-  const start = () => {
-    timer = window.setInterval(schedule, WORK_INTERVAL * 1e3);
-  };
-  const stop = () => clearInterval(timer);
-  start();
-  return {
-    audioContext,
-    tempo,
-    beatsPerCycle,
-    beatLength,
-    spells,
-    beatCount,
-    start,
-    stop,
-    createSampler: createSampler(audioContext),
-    createSynth: createSynth(audioContext),
-    getRandomInt: getRandomInt(RNG(randomSeed)),
-    get timing() {
-      return {
-        cycles: Math.floor(beatCount / beatsPerCycle),
-        beats: beatCount % beatsPerCycle
-      };
-    },
-    cast(name, props) {
-      const delay = beatLength * (beatsPerCycle - beatCount % beatsPerCycle) * 1e3 - 50;
-      if (props == null) {
-        window.setTimeout(() => {
-          spells.delete(name);
-        }, delay);
-        return;
-      }
-      const spell = createSpell(this)(props);
-      window.setTimeout(() => {
-        spells.set(name, spell);
-      }, delay);
-    },
-    useMetronome(enabled = true) {
-      if (enabled) {
-        const sound = () => createSynth(this.audioContext)([
-          {
-            type: "square",
-            detune: 0,
-            semitone: 0
-          }
-        ]);
-        const sequence = ({ beats }) => {
-          return [
-            createStep(beats === 0 ? NOTE_NUMBERS.A6 : NOTE_NUMBERS.A5, 1, 0.2)
-          ];
-        };
-        const duration = 1;
-        this.cast("metronome", {
-          sound,
-          sequence,
-          duration
-        });
-      } else {
-        this.cast("metronome", null);
-      }
-    }
-  };
-};
-
 // src/mage.sequence.ts
 var createSequence = (rng) => (scale) => (pattern, duration = 1, volume = 1, ignoreMarks = false) => {
   const seq = [];
@@ -622,6 +507,123 @@ var findCloseBracketIndex = (bracket, pattern, startIndex) => {
   return -1;
 };
 
+// src/mage.utils.ts
+function* RNG(seed = 88675123) {
+  let x = 123456789;
+  let y = 362436069;
+  let z = 521288629;
+  let w = seed;
+  while (true) {
+    const t = x ^ x << 11;
+    x = y;
+    y = z;
+    z = w;
+    w = w ^ w >>> 19 ^ (t ^ t >>> 8);
+    yield (w + 2147483647) / 4294967296;
+  }
+}
+var getRandomInt = (generator) => (min = 0, max = 9) => {
+  return Math.floor(generator.next().value * (max + 1 - min)) + min;
+};
+
+// src/mage.ts
+var createMage = ({
+  tempo = 128,
+  beatsPerCycle = 8,
+  randomSeed = 88675123
+}) => {
+  const audioContext = new AudioContext();
+  const beatLength = 60 / tempo;
+  let beatCount = 0;
+  const spells = /* @__PURE__ */ new Map();
+  let nextScheduleTime = 0;
+  const schedule = () => {
+    while (audioContext.currentTime + WORK_INTERVAL > nextScheduleTime) {
+      if (beatCount % beatsPerCycle === 0) {
+        console.log("---------------------");
+        spells.forEach((spell) => {
+          if (!spell.isActivated) {
+            spell.isActivated = true;
+            spell.nextScheduleTime = nextScheduleTime;
+          }
+        });
+      }
+      console.log({
+        beatCount
+      });
+      beatCount++;
+      nextScheduleTime += beatLength;
+    }
+    spells.forEach((spell) => {
+      spell.schedule(audioContext.currentTime, beatLength);
+    });
+  };
+  let timer;
+  const start = () => {
+    timer = window.setInterval(schedule, WORK_INTERVAL * 1e3);
+  };
+  const stop = () => clearInterval(timer);
+  start();
+  const rng = getRandomInt(RNG(randomSeed));
+  return {
+    audioContext,
+    tempo,
+    beatsPerCycle,
+    beatLength,
+    spells,
+    beatCount,
+    start,
+    stop,
+    getRandomInt: rng,
+    createSampler: createSampler(audioContext),
+    createSynth: createSynth(audioContext),
+    createSequence: createSequence(rng),
+    get timing() {
+      return {
+        cycles: Math.floor(beatCount / beatsPerCycle),
+        beats: beatCount % beatsPerCycle
+      };
+    },
+    cast(name, props) {
+      const delay = beatLength * (beatsPerCycle - beatCount % beatsPerCycle) * 1e3 - 50;
+      if (props == null) {
+        window.setTimeout(() => {
+          spells.delete(name);
+        }, delay);
+        return;
+      }
+      const spell = createSpell(this)(props);
+      window.setTimeout(() => {
+        spells.set(name, spell);
+      }, delay);
+    },
+    useMetronome(enabled = true) {
+      if (enabled) {
+        const sound = () => createSynth(this.audioContext)([
+          {
+            type: "square",
+            detune: 0,
+            semitone: 0
+          }
+        ]);
+        const sequence = ({ beats }) => {
+          return [
+            createStep(beats === 0 ? NOTE_NUMBERS.A6 : NOTE_NUMBERS.A5, 1, 0.2)
+          ];
+        };
+        const duration = 1;
+        this.cast("metronome", {
+          sound,
+          sequence,
+          duration
+        });
+      } else {
+        this.cast("metronome", null);
+      }
+    }
+  };
+};
+
 // src/mage.scale.ts
 var createScale = (rootNoteNumber, ...chordIntervals) => {
   const intervals = new Set(chordIntervals.flat().flat());
@@ -641,7 +643,6 @@ export {
   INTERVALS,
   NOTE_NUMBERS,
   createScale,
-  createSequence,
   createStep,
   src_default as default,
   getRootNotes
