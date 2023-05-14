@@ -4,7 +4,7 @@ import { createSynth } from "./mage.synth";
 import { createSampler } from "./mage.sampler";
 import { createStep } from "./mage.step";
 import { createSequence } from "./mage.sequence";
-import { getRandomInt, RNG } from "./mage.utils";
+import { getRandomInt, RNG } from "./mage.rng";
 import { WORK_INTERVAL, NOTE_NUMBERS } from "./mage.const";
 
 /**

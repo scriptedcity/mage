@@ -33,7 +33,11 @@ export const createSequence =
       const parsed = parseInt(op, 16);
       // note
       if (!isNaN(parsed)) {
-        seq.push({ noteNumber: scale[parsed], volume, duration });
+        seq.push({
+          noteNumber: scale[parsed % scale.length],
+          volume,
+          duration,
+        });
         continue;
       }
       if (ignoreMarks) {
