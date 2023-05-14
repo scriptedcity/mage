@@ -28,3 +28,45 @@ export const createScale = (
 export const getRootNotes = (scales: number[][]) => {
   return scales.map((scale) => scale[0]);
 };
+
+/**
+ * `invertScale` function takes a musical scale (represented as an array of MIDI note numbers)
+ * and inverts it by moving the first or last note up or down by one octave,
+ * depending on the value of `repetition`.
+ *
+ * @param scale - An array of numbers representing a musical scale in MIDI note numbers.
+ * @param repetition - A number indicating how many times to invert the scale.
+ * If `repetition` is positive, the first note of the scale is moved up by one octave
+ * for each repetition. If `repetition` is negative, the last note of the scale
+ * is moved down by one octave for each repetition.
+ *
+ * @returns A new array representing the inverted scale. If `repetition` is 0 or if the
+ * input scale is empty, the original scale is returned.
+ *
+ * @throws Will throw an error if the scale becomes empty during the inversion process.
+ */
+export const invertScale = (scale: number[], repetition: number): number[] => {
+  if (repetition === 0 || scale.length === 0) {
+    return scale;
+  }
+
+  const step = repetition > 0 ? 12 : -12;
+  const limit = repetition > 0 ? 127 : 0;
+  const invertedScale = [...scale];
+
+  for (let i = 0; i < Math.abs(repetition); i++) {
+    let note = repetition > 0 ? invertedScale.shift() : invertedScale.pop();
+    if (note === undefined) {
+      throw new Error("Scale is empty.");
+    }
+    if (
+      (repetition > 0 && note + step > limit) ||
+      (repetition < 0 && note + step < limit)
+    ) {
+      note -= step;
+    }
+    note += step;
+    repetition > 0 ? invertedScale.push(note) : invertedScale.unshift(note);
+  }
+  return invertedScale;
+};
