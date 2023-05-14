@@ -216,13 +216,14 @@ var INTERVALS = {
   six: [9],
   min7: [10],
   maj7: [11],
+  octave: [12],
   add9: [14],
   add11: [17],
   add13: [19],
   major: [0, 2, 4, 5, 7, 9, 11],
-  minor: [0, 2, 3, 5, 6, 8, 11],
-  harmonicmin: [0, 2, 3, 5, 7, 8, 11],
-  melodicmin: [0, 2, 3, 5, 7, 9, 11],
+  minor: [0, 2, 3, 5, 7, 8, 10],
+  harmonicMin: [0, 2, 3, 5, 7, 8, 11],
+  melodicMin: [0, 2, 3, 5, 7, 9, 11],
   ionian: [0, 2, 4, 5, 7, 9, 11],
   dorian: [0, 2, 3, 5, 7, 9, 10],
   phrygian: [0, 1, 3, 5, 7, 8, 10],
@@ -230,7 +231,12 @@ var INTERVALS = {
   mixolydian: [0, 2, 4, 5, 7, 9, 10],
   aeolian: [0, 2, 3, 5, 7, 8, 10],
   locrian: [0, 1, 3, 5, 6, 8, 10],
-  wholetone: [0, 2, 4, 6, 8, 10]
+  wholetone: [0, 2, 4, 6, 8, 10],
+  majorPentatonic: [0, 2, 4, 7, 9],
+  minorPentatonic: [0, 3, 5, 7, 10],
+  diminished: [0, 2, 3, 5, 6, 8, 9, 11],
+  combinationDiminished: [0, 1, 3, 4, 6, 7, 9, 10],
+  chromatic: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 };
 
 // src/mage.spell.ts

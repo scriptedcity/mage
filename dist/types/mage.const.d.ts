@@ -234,13 +234,14 @@ export declare const INTERVALS: {
     six: number[];
     min7: number[];
     maj7: number[];
+    octave: number[];
     add9: number[];
     add11: number[];
     add13: number[];
     major: number[];
     minor: number[];
-    harmonicmin: number[];
-    melodicmin: number[];
+    harmonicMin: number[];
+    melodicMin: number[];
     ionian: number[];
     dorian: number[];
     phrygian: number[];
@@ -249,4 +250,9 @@ export declare const INTERVALS: {
     aeolian: number[];
     locrian: number[];
     wholetone: number[];
+    majorPentatonic: number[];
+    minorPentatonic: number[];
+    diminished: number[];
+    combinationDiminished: number[];
+    chromatic: number[];
 };
