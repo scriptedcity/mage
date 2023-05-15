@@ -40,7 +40,8 @@ export const createSpell =
           }
         });
       } catch (e) {
-        console.log(e);
+        console.error("Failed to flatten steps:", e);
+        throw e;
       }
       return result;
     };

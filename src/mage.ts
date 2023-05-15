@@ -5,7 +5,11 @@ import { createSampler } from "./mage.sampler";
 import { createStep } from "./mage.step";
 import { createSequence } from "./mage.sequence";
 import { getRandomInt, RNG } from "./mage.rng";
-import { WORK_INTERVAL, NOTE_NUMBERS } from "./mage.const";
+import {
+  WORK_INTERVAL,
+  CAST_DELAY_CORRECTION,
+  NOTE_NUMBERS,
+} from "./mage.const";
 
 /**
  * `createMage` is a function to generate a `Mage` object, which encapsulates the behavior of a mage,
@@ -44,6 +48,9 @@ export const createMage = ({
   beatsPerCycle = 8,
   randomSeed = 88675123,
 }): Mage => {
+  if (tempo <= 1 || beatsPerCycle <= 1) {
+    throw new Error("Tempo and beatsPerCycle must be greater than 1.");
+  }
   const audioContext = new AudioContext();
   const beatLength = 60 / tempo;
   let beatCount = 0;
@@ -106,7 +113,8 @@ export const createMage = ({
     },
     cast(name, props) {
       const delay =
-        beatLength * (beatsPerCycle - (beatCount % beatsPerCycle)) * 1000 - 50;
+        beatLength * (beatsPerCycle - (beatCount % beatsPerCycle)) * 1000 -
+        CAST_DELAY_CORRECTION;
       if (props == null) {
         window.setTimeout(() => {
           spells.delete(name);
