@@ -4,6 +4,7 @@ import { OscillatorType, Source } from "./mage.types";
  * based on a set of oscillators.
  *
  * @param audioContext - The AudioContext in which the synth operates.
+ * @param analyser - THE analyser node for the audio context.
  *
  * @returns A function that takes an optional array of oscillator configurations. Each oscillator configuration
  *          has the following properties:
@@ -23,7 +24,7 @@ import { OscillatorType, Source } from "./mage.types";
  *            - `release` - The release time in seconds (default is 0).
  *          The `play` method creates the necessary gain and oscillator nodes, connects them, and schedules the note to play.
  */
-export declare const createSynth: (audioContext: AudioContext) => (oscillators?: {
+export declare const createSynth: (audioContext: AudioContext, analyser: AnalyserNode) => (oscillators?: {
     type: OscillatorType;
     detune: number;
     semitone: number;
