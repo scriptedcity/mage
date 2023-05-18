@@ -1,4 +1,5 @@
 // src/mage.const.ts
+var CAST_DELAY_CORRECTION = 50;
 var WORK_INTERVAL = 0.1;
 var MASTER_TUNE = 440;
 var FREQUENCY = Array(128).fill(void 0).map((_, i) => MASTER_TUNE * Math.pow(2, (i - 69) / 12));
@@ -257,7 +258,8 @@ var createSpell = (mage) => (props) => {
         }
       });
     } catch (e) {
-      console.log(e);
+      console.error("Failed to flatten steps:", e);
+      throw e;
     }
     return result;
   };
@@ -340,6 +342,7 @@ var createGainNode = (audioContext) => (startTime, baseGain, duration, adsr) => 
 
 // src/mage.synth.ts
 var createSynth = (audioContext) => (oscillators = [{ type: "sawtooth", detune: 0, semitone: 0 }]) => {
+  const oscillatorCount = oscillators.length;
   const play = (props) => {
     const { noteNumber, startTime, duration, volume } = props;
     const adsr = props.adsr ?? {
@@ -351,7 +354,7 @@ var createSynth = (audioContext) => (oscillators = [{ type: "sawtooth", detune: 
     oscillators.forEach((oscillator) => {
       const gain = createGainNode(audioContext)(
         startTime,
-        volume,
+        volume / oscillatorCount,
         duration,
         adsr
       );
@@ -426,7 +429,11 @@ var createSequence = (rng) => (scale) => (pattern, duration = 1, volume = 1, ign
     const op = ptn[i];
     const parsed = parseInt(op, 16);
     if (!isNaN(parsed)) {
-      seq.push({ noteNumber: scale[parsed], volume, duration });
+      seq.push({
+        noteNumber: scale[parsed % scale.length],
+        volume,
+        duration
+      });
       continue;
     }
     if (ignoreMarks) {
@@ -513,7 +520,7 @@ var findCloseBracketIndex = (bracket, pattern, startIndex) => {
   return -1;
 };
 
-// src/mage.utils.ts
+// src/mage.rng.ts
 function* RNG(seed = 88675123) {
   let x = 123456789;
   let y = 362436069;
@@ -538,6 +545,9 @@ var createMage = ({
   beatsPerCycle = 8,
   randomSeed = 88675123
 }) => {
+  if (tempo <= 1 || beatsPerCycle <= 1) {
+    throw new Error("Tempo and beatsPerCycle must be greater than 1.");
+  }
   const audioContext = new AudioContext();
   const beatLength = 60 / tempo;
   let beatCount = 0;
@@ -569,7 +579,6 @@ var createMage = ({
     timer = window.setInterval(schedule, WORK_INTERVAL * 1e3);
   };
   const stop = () => clearInterval(timer);
-  start();
   const rng = getRandomInt(RNG(randomSeed));
   return {
     audioContext,
@@ -591,7 +600,7 @@ var createMage = ({
       };
     },
     cast(name, props) {
-      const delay = beatLength * (beatsPerCycle - beatCount % beatsPerCycle) * 1e3 - 50;
+      const delay = beatLength * (beatsPerCycle - beatCount % beatsPerCycle) * 1e3 - CAST_DELAY_CORRECTION;
       if (props == null) {
         window.setTimeout(() => {
           spells.delete(name);
