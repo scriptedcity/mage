@@ -88,7 +88,6 @@ export const createMage = ({
     timer = window.setInterval(schedule, WORK_INTERVAL * 1000);
   };
   const stop = () => clearInterval(timer);
-  start();
 
   const rng = getRandomInt(RNG(randomSeed));
 
