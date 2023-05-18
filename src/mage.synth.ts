@@ -7,6 +7,7 @@ import { createGainNode } from "./mage.gain";
  * based on a set of oscillators.
  *
  * @param audioContext - The AudioContext in which the synth operates.
+ * @param analyser - THE analyser node for the audio context.
  *
  * @returns A function that takes an optional array of oscillator configurations. Each oscillator configuration
  *          has the following properties:
@@ -27,7 +28,7 @@ import { createGainNode } from "./mage.gain";
  *          The `play` method creates the necessary gain and oscillator nodes, connects them, and schedules the note to play.
  */
 export const createSynth =
-  (audioContext: AudioContext) =>
+  (audioContext: AudioContext, analyser: AnalyserNode) =>
   (
     oscillators: {
       type: OscillatorType;
@@ -59,6 +60,7 @@ export const createSynth =
           adsr
         );
         gain.connect(audioContext.destination);
+        gain.connect(analyser);
 
         const osc = new OscillatorNode(audioContext, {
           type: oscillator.type,

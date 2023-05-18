@@ -13,6 +13,7 @@ import { Mage } from "./mage.types";
  *
  * @returns An object of type `Mage` with the following properties and methods:
  *  - `audioContext` - The AudioContext for the mage.
+ *  - `analyser` - The AnalyserNode for the mage.
  *  - `tempo` - The tempo in beats per minute.
  *  - `beatsPerCycle` - The number of beats in a cycle.
  *  - `beatLength` - The length of each beat in seconds.

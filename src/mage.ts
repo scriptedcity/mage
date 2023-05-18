@@ -25,6 +25,7 @@ import {
  *
  * @returns An object of type `Mage` with the following properties and methods:
  *  - `audioContext` - The AudioContext for the mage.
+ *  - `analyser` - The AnalyserNode for the mage.
  *  - `tempo` - The tempo in beats per minute.
  *  - `beatsPerCycle` - The number of beats in a cycle.
  *  - `beatLength` - The length of each beat in seconds.
@@ -52,6 +53,7 @@ export const createMage = ({
     throw new Error("Tempo and beatsPerCycle must be greater than 1.");
   }
   const audioContext = new AudioContext();
+  const analyser = audioContext.createAnalyser();
   const beatLength = 60 / tempo;
   let beatCount = 0;
 
@@ -93,6 +95,7 @@ export const createMage = ({
 
   return {
     audioContext,
+    analyser,
     tempo,
     beatsPerCycle,
     beatLength,
@@ -101,8 +104,8 @@ export const createMage = ({
     start,
     stop,
     getRandomInt: rng,
-    createSampler: createSampler(audioContext),
-    createSynth: createSynth(audioContext),
+    createSampler: createSampler(audioContext, analyser),
+    createSynth: createSynth(audioContext, analyser),
     createSequence: createSequence(rng),
     get timing() {
       return {
@@ -128,7 +131,10 @@ export const createMage = ({
     useMetronome(enabled = true) {
       if (enabled) {
         const sound = () =>
-          createSynth(this.audioContext)([
+          createSynth(
+            this.audioContext,
+            this.analyser
+          )([
             {
               type: "square",
               detune: 0,

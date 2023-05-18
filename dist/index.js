@@ -341,7 +341,7 @@ var createGainNode = (audioContext) => (startTime, baseGain, duration, adsr) => 
 };
 
 // src/mage.synth.ts
-var createSynth = (audioContext) => (oscillators = [{ type: "sawtooth", detune: 0, semitone: 0 }]) => {
+var createSynth = (audioContext, analyser) => (oscillators = [{ type: "sawtooth", detune: 0, semitone: 0 }]) => {
   const oscillatorCount = oscillators.length;
   const play = (props) => {
     const { noteNumber, startTime, duration, volume } = props;
@@ -359,6 +359,7 @@ var createSynth = (audioContext) => (oscillators = [{ type: "sawtooth", detune: 
         adsr
       );
       gain.connect(audioContext.destination);
+      gain.connect(analyser);
       const osc = new OscillatorNode(audioContext, {
         type: oscillator.type,
         detune: oscillator.detune,
@@ -373,7 +374,7 @@ var createSynth = (audioContext) => (oscillators = [{ type: "sawtooth", detune: 
 };
 
 // src/mage.sampler.ts
-var createSampler = (audioContext) => async (sourceUrls) => {
+var createSampler = (audioContext, analyser) => async (sourceUrls) => {
   const promises = sourceUrls.map(async (url) => {
     return fetch(url).then((response) => {
       return response.arrayBuffer();
@@ -408,6 +409,7 @@ var createSampler = (audioContext) => async (sourceUrls) => {
     if (audioBuffer.buffer != null) {
       const bufferDuration = audioBuffer.buffer.duration;
       gain.connect(audioContext.destination);
+      gain.connect(analyser);
       audioBuffer.connect(gain);
       audioBuffer.start(startTime);
       audioBuffer.stop(startTime + bufferDuration + adsr.release / 1e3);
@@ -549,6 +551,7 @@ var createMage = ({
     throw new Error("Tempo and beatsPerCycle must be greater than 1.");
   }
   const audioContext = new AudioContext();
+  const analyser = audioContext.createAnalyser();
   const beatLength = 60 / tempo;
   let beatCount = 0;
   const spells = /* @__PURE__ */ new Map();
@@ -582,6 +585,7 @@ var createMage = ({
   const rng = getRandomInt(RNG(randomSeed));
   return {
     audioContext,
+    analyser,
     tempo,
     beatsPerCycle,
     beatLength,
@@ -590,8 +594,8 @@ var createMage = ({
     start,
     stop,
     getRandomInt: rng,
-    createSampler: createSampler(audioContext),
-    createSynth: createSynth(audioContext),
+    createSampler: createSampler(audioContext, analyser),
+    createSynth: createSynth(audioContext, analyser),
     createSequence: createSequence(rng),
     get timing() {
       return {
@@ -614,7 +618,10 @@ var createMage = ({
     },
     useMetronome(enabled = true) {
       if (enabled) {
-        const sound = () => createSynth(this.audioContext)([
+        const sound = () => createSynth(
+          this.audioContext,
+          this.analyser
+        )([
           {
             type: "square",
             detune: 0,

@@ -3,6 +3,7 @@ import { Source } from "./mage.types";
  * `createSampler` is a function that creates a sampler source, which can be used to play back audio files.
  *
  * @param audioContext - The AudioContext in which the sampler operates.
+ * @param analyser - THE analyser node for the audio context.
  *
  * @returns A function that takes an array of sourceUrls, which are URLs of audio files to be loaded into the sampler.
  *          The returned function creates a Source object with a `play` method that takes the following properties:
@@ -21,4 +22,4 @@ import { Source } from "./mage.types";
  * @throws If any of the fetch requests fail, the corresponding promise is rejected and the status of the Promise.allSettled promise becomes 'rejected'.
  *         The rejected promise will return `null` for the audio buffer in the array of audio buffers.
  */
-export declare const createSampler: (audioContext: AudioContext) => (sourceUrls: string[]) => Promise<Source>;
+export declare const createSampler: (audioContext: AudioContext, analyser: AnalyserNode) => (sourceUrls: string[]) => Promise<Source>;

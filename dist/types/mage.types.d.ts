@@ -5,6 +5,7 @@ export type Timing = {
 };
 export type Mage = {
     audioContext: AudioContext;
+    analyser: AnalyserNode;
     tempo: number;
     beatsPerCycle: number;
     beatLength: number;

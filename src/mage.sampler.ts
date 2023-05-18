@@ -5,6 +5,7 @@ import { createGainNode } from "./mage.gain";
  * `createSampler` is a function that creates a sampler source, which can be used to play back audio files.
  *
  * @param audioContext - The AudioContext in which the sampler operates.
+ * @param analyser - THE analyser node for the audio context.
  *
  * @returns A function that takes an array of sourceUrls, which are URLs of audio files to be loaded into the sampler.
  *          The returned function creates a Source object with a `play` method that takes the following properties:
@@ -24,7 +25,7 @@ import { createGainNode } from "./mage.gain";
  *         The rejected promise will return `null` for the audio buffer in the array of audio buffers.
  */
 export const createSampler =
-  (audioContext: AudioContext) =>
+  (audioContext: AudioContext, analyser: AnalyserNode) =>
   async (sourceUrls: string[]): Promise<Source> => {
     const promises = sourceUrls.map(async (url) => {
       return fetch(url)
@@ -69,6 +70,7 @@ export const createSampler =
       if (audioBuffer.buffer != null) {
         const bufferDuration = audioBuffer.buffer.duration;
         gain.connect(audioContext.destination);
+        gain.connect(analyser);
 
         audioBuffer.connect(gain);
         audioBuffer.start(startTime);
