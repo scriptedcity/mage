@@ -35,6 +35,8 @@ export const createSynth =
       semitone: number;
     }[] = [{ type: "sawtooth", detune: 0, semitone: 0 }]
   ): Source => {
+    const oscillatorCount = oscillators.length;
+
     const play = (props: {
       noteNumber: number;
       volume: number;
@@ -52,7 +54,7 @@ export const createSynth =
       oscillators.forEach((oscillator) => {
         const gain = createGainNode(audioContext)(
           startTime,
-          volume,
+          volume / oscillatorCount,
           duration,
           adsr
         );
