@@ -1,11 +1,11 @@
-import { Source, Envelope } from "./mage.types";
+import { Source, Envelope, Mage } from "./mage.types";
 import { createGainNode } from "./mage.gain";
 
 /**
  * `createSampler` is a function that creates a sampler source, which can be used to play back audio files.
  *
- * @param audioContext - The AudioContext in which the sampler operates.
- * @param analyser - THE analyser node for the audio context.
+ * @param mage - The Mage object.
+ * @param sourceUrls - An array of URLs of audio files to be loaded into the sampler.
  *
  * @returns A function that takes an array of sourceUrls, which are URLs of audio files to be loaded into the sampler.
  *          The returned function creates a Source object with a `play` method that takes the following properties:
@@ -25,7 +25,7 @@ import { createGainNode } from "./mage.gain";
  *         The rejected promise will return `null` for the audio buffer in the array of audio buffers.
  */
 export const createSampler =
-  (audioContext: AudioContext, analyser: AnalyserNode) =>
+  (mage: Mage) =>
   async (sourceUrls: string[]): Promise<Source> => {
     const promises = sourceUrls.map(async (url) => {
       return fetch(url)
@@ -33,7 +33,7 @@ export const createSampler =
           return response.arrayBuffer();
         })
         .then(async (arrBuf) => {
-          const audioBuf = await audioContext.decodeAudioData(arrBuf);
+          const audioBuf = await mage.audioContext.decodeAudioData(arrBuf);
           return audioBuf;
         });
     });
@@ -58,19 +58,19 @@ export const createSampler =
         sustain: 1,
         release: 0,
       };
-      const gain = createGainNode(audioContext)(
+      const gain = createGainNode(mage.audioContext)(
         startTime,
         volume,
         duration,
         adsr
       );
 
-      const audioBuffer = audioContext.createBufferSource();
+      const audioBuffer = mage.audioContext.createBufferSource();
       audioBuffer.buffer = audioBuffers[noteNumber];
       if (audioBuffer.buffer != null) {
         const bufferDuration = audioBuffer.buffer.duration;
-        gain.connect(audioContext.destination);
-        gain.connect(analyser);
+        gain.connect(mage.audioContext.destination);
+        gain.connect(mage.analyser);
 
         audioBuffer.connect(gain);
         audioBuffer.start(startTime);

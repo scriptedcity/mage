@@ -24,6 +24,7 @@ export const createSpell =
   (mage: Mage) =>
   (props: { sound: Sound; sequence: Sequence; duration: number }) => {
     const { sound, sequence, duration } = props;
+    const analyser = mage.audioContext.createAnalyser();
     let _isActivated = false;
     let _nextScheduleTime = 0;
     let _currentStep = 0;
@@ -56,12 +57,15 @@ export const createSpell =
         const { step, value } = steps[_currentStep];
         if (step) {
           [step.noteNumber].flat().forEach((noteNumber) => {
-            sound({ ...mage.timing, loopCount }).play({
-              noteNumber,
-              startTime: _nextScheduleTime,
-              volume: step.volume ?? 1,
-              duration: spellLength * value * step.duration,
-            });
+            sound({ ...mage.timing, loopCount }).play(
+              {
+                noteNumber,
+                startTime: _nextScheduleTime,
+                volume: step.volume ?? 1,
+                duration: spellLength * value * step.duration,
+              },
+              [mage.analyser, analyser]
+            );
           });
         }
         _nextScheduleTime += spellLength * value;
@@ -95,6 +99,7 @@ export const createSpell =
       get currentStep() {
         return _currentStep;
       },
+      analyser,
       schedule,
       sound,
       sequence,

@@ -36,6 +36,7 @@ export type Mage = {
 };
 
 export type Spell = {
+  analyser: AnalyserNode;
   isActivated: boolean;
   nextScheduleTime: number;
   readonly currentStep: number;
@@ -65,13 +66,16 @@ export type Envelope = {
 export type Sound = (timing: Timing) => Source;
 
 export type Source = {
-  play: (props: {
-    noteNumber: number;
-    volume: number;
-    duration: number;
-    startTime: number;
-    adsr?: Envelope;
-  }) => void;
+  play: (
+    props: {
+      noteNumber: number;
+      volume: number;
+      duration: number;
+      startTime: number;
+      adsr?: Envelope;
+    },
+    analysers?: AnalyserNode[]
+  ) => void;
 };
 
 export type OscillatorType = "sine" | "square" | "sawtooth" | "triangle";

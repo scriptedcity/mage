@@ -93,7 +93,7 @@ export const createMage = ({
 
   const rng = getRandomInt(RNG(randomSeed));
 
-  return {
+  const mage: Partial<Mage> = {
     audioContext,
     analyser,
     tempo,
@@ -104,8 +104,6 @@ export const createMage = ({
     start,
     stop,
     getRandomInt: rng,
-    createSampler: createSampler(audioContext, analyser),
-    createSynth: createSynth(audioContext, analyser),
     createSequence: createSequence(rng),
     get timing() {
       return {
@@ -113,48 +111,48 @@ export const createMage = ({
         beats: beatCount % beatsPerCycle,
       };
     },
-    cast(name, props) {
-      const delay =
-        beatLength * (beatsPerCycle - (beatCount % beatsPerCycle)) * 1000 -
-        CAST_DELAY_CORRECTION;
-      if (props == null) {
-        window.setTimeout(() => {
-          spells.delete(name);
-        }, delay);
-        return;
-      }
-      const spell = createSpell(this)(props);
-      window.setTimeout(() => {
-        spells.set(name, spell);
-      }, delay);
-    },
-    useMetronome(enabled = true) {
-      if (enabled) {
-        const sound = () =>
-          createSynth(
-            this.audioContext,
-            this.analyser
-          )([
-            {
-              type: "square",
-              detune: 0,
-              semitone: 0,
-            },
-          ]);
-        const sequence: Sequence = ({ beats }) => {
-          return [
-            createStep(beats === 0 ? NOTE_NUMBERS.A6 : NOTE_NUMBERS.A5, 1, 0.2),
-          ];
-        };
-        const duration = 1;
-        this.cast("metronome", {
-          sound,
-          sequence,
-          duration,
-        });
-      } else {
-        this.cast("metronome", null);
-      }
-    },
   };
+  mage.createSampler = createSampler(mage as Mage);
+  mage.createSynth = createSynth(mage as Mage);
+  mage.cast = (name, props) => {
+    const delay =
+      beatLength * (beatsPerCycle - (beatCount % beatsPerCycle)) * 1000 -
+      CAST_DELAY_CORRECTION;
+    if (props == null) {
+      window.setTimeout(() => {
+        spells.delete(name);
+      }, delay);
+      return;
+    }
+    const spell = createSpell(mage as Mage)(props);
+    window.setTimeout(() => {
+      spells.set(name, spell);
+    }, delay);
+  };
+  mage.useMetronome = (enabled = true) => {
+    if (enabled) {
+      const sound = () =>
+        createSynth(mage as Mage)([
+          {
+            type: "square",
+            detune: 0,
+            semitone: 0,
+          },
+        ]);
+      const sequence: Sequence = ({ beats }) => {
+        return [
+          createStep(beats === 0 ? NOTE_NUMBERS.A6 : NOTE_NUMBERS.A5, 1, 0.2),
+        ];
+      };
+      const duration = 1;
+      (mage as Mage).cast("metronome", {
+        sound,
+        sequence,
+        duration,
+      });
+    } else {
+      (mage as Mage).cast("metronome", null);
+    }
+  };
+  return mage as Mage;
 };
