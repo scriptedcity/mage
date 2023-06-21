@@ -1,5 +1,5 @@
 // src/mage.const.ts
-var CAST_DELAY_CORRECTION = 50;
+var CAST_DELAY_CORRECTION = 10;
 var WORK_INTERVAL = 0.1;
 var MASTER_TUNE = 440;
 var FREQUENCY = Array(128).fill(void 0).map((_, i) => MASTER_TUNE * Math.pow(2, (i - 69) / 12));
@@ -243,6 +243,7 @@ var INTERVALS = {
 // src/mage.spell.ts
 var createSpell = (mage) => (props) => {
   const { sound, sequence, duration } = props;
+  const analyser = mage.audioContext.createAnalyser();
   let _isActivated = false;
   let _nextScheduleTime = 0;
   let _currentStep = 0;
@@ -263,7 +264,7 @@ var createSpell = (mage) => (props) => {
     }
     return result;
   };
-  const tempSteps = sequence({ ...mage.timing, loopCount });
+  const tempSteps = sequence({ ...mage.getTiming(), loopCount });
   let steps = flatSteps(tempSteps, 1 / tempSteps.length);
   const schedule = (currentTime, beatLength) => {
     const spellLength = beatLength * duration;
@@ -273,12 +274,15 @@ var createSpell = (mage) => (props) => {
       const { step, value } = steps[_currentStep];
       if (step) {
         [step.noteNumber].flat().forEach((noteNumber) => {
-          sound({ ...mage.timing, loopCount }).play({
-            noteNumber,
-            startTime: _nextScheduleTime,
-            volume: step.volume ?? 1,
-            duration: spellLength * value * step.duration
-          });
+          sound({ ...mage.getTiming(), loopCount }).play(
+            {
+              noteNumber,
+              startTime: _nextScheduleTime,
+              volume: step.volume ?? 1,
+              duration: spellLength * value * step.duration
+            },
+            [mage.analyser, analyser]
+          );
         });
       }
       _nextScheduleTime += spellLength * value;
@@ -287,7 +291,7 @@ var createSpell = (mage) => (props) => {
         _currentStep = 0;
         loopCount++;
         steps = flatSteps(
-          sequence({ ...mage.timing, loopCount }),
+          sequence({ ...mage.getTiming(), loopCount }),
           1 / tempSteps.length
         );
       }
@@ -309,6 +313,7 @@ var createSpell = (mage) => (props) => {
     get currentStep() {
       return _currentStep;
     },
+    analyser,
     schedule,
     sound,
     sequence,
@@ -341,7 +346,7 @@ var createGainNode = (audioContext) => (startTime, baseGain, duration, adsr) => 
 };
 
 // src/mage.synth.ts
-var createSynth = (audioContext, analyser) => (oscillators = [{ type: "sawtooth", detune: 0, semitone: 0 }]) => {
+var createSynth = (mage) => (oscillators = [{ type: "sawtooth", detune: 0, semitone: 0 }]) => {
   const oscillatorCount = oscillators.length;
   const play = (props) => {
     const { noteNumber, startTime, duration, volume } = props;
@@ -352,15 +357,15 @@ var createSynth = (audioContext, analyser) => (oscillators = [{ type: "sawtooth"
       release: 0
     };
     oscillators.forEach((oscillator) => {
-      const gain = createGainNode(audioContext)(
+      const gain = createGainNode(mage.audioContext)(
         startTime,
         volume / oscillatorCount,
         duration,
         adsr
       );
-      gain.connect(audioContext.destination);
-      gain.connect(analyser);
-      const osc = new OscillatorNode(audioContext, {
+      gain.connect(mage.audioContext.destination);
+      gain.connect(mage.analyser);
+      const osc = new OscillatorNode(mage.audioContext, {
         type: oscillator.type,
         detune: oscillator.detune,
         frequency: FREQUENCY[noteNumber + oscillator.semitone]
@@ -374,12 +379,12 @@ var createSynth = (audioContext, analyser) => (oscillators = [{ type: "sawtooth"
 };
 
 // src/mage.sampler.ts
-var createSampler = (audioContext, analyser) => async (sourceUrls) => {
+var createSampler = (mage) => async (sourceUrls) => {
   const promises = sourceUrls.map(async (url) => {
     return fetch(url).then((response) => {
       return response.arrayBuffer();
     }).then(async (arrBuf) => {
-      const audioBuf = await audioContext.decodeAudioData(arrBuf);
+      const audioBuf = await mage.audioContext.decodeAudioData(arrBuf);
       return audioBuf;
     });
   });
@@ -398,18 +403,18 @@ var createSampler = (audioContext, analyser) => async (sourceUrls) => {
       sustain: 1,
       release: 0
     };
-    const gain = createGainNode(audioContext)(
+    const gain = createGainNode(mage.audioContext)(
       startTime,
       volume,
       duration,
       adsr
     );
-    const audioBuffer = audioContext.createBufferSource();
+    const audioBuffer = mage.audioContext.createBufferSource();
     audioBuffer.buffer = audioBuffers[noteNumber];
     if (audioBuffer.buffer != null) {
       const bufferDuration = audioBuffer.buffer.duration;
-      gain.connect(audioContext.destination);
-      gain.connect(analyser);
+      gain.connect(mage.audioContext.destination);
+      gain.connect(mage.analyser);
       audioBuffer.connect(gain);
       audioBuffer.start(startTime);
       audioBuffer.stop(startTime + bufferDuration + adsr.release / 1e3);
@@ -567,9 +572,7 @@ var createMage = ({
           }
         });
       }
-      console.log({
-        beatCount
-      });
+      audioContext.dispatchEvent(tickEvent);
       beatCount++;
       nextScheduleTime += beatLength;
     }
@@ -583,7 +586,7 @@ var createMage = ({
   };
   const stop = () => clearInterval(timer);
   const rng = getRandomInt(RNG(randomSeed));
-  return {
+  const mage = {
     audioContext,
     analyser,
     tempo,
@@ -594,56 +597,62 @@ var createMage = ({
     start,
     stop,
     getRandomInt: rng,
-    createSampler: createSampler(audioContext, analyser),
-    createSynth: createSynth(audioContext, analyser),
-    createSequence: createSequence(rng),
-    get timing() {
-      return {
-        cycles: Math.floor(beatCount / beatsPerCycle),
-        beats: beatCount % beatsPerCycle
-      };
-    },
-    cast(name, props) {
-      const delay = beatLength * (beatsPerCycle - beatCount % beatsPerCycle) * 1e3 - CAST_DELAY_CORRECTION;
-      if (props == null) {
-        window.setTimeout(() => {
-          spells.delete(name);
-        }, delay);
-        return;
-      }
-      const spell = createSpell(this)(props);
+    createSequence: createSequence(rng)
+  };
+  mage.getTiming = () => {
+    return {
+      cycles: Math.floor(beatCount / beatsPerCycle),
+      beats: beatCount % beatsPerCycle + 1
+    };
+  };
+  mage.createSampler = createSampler(mage);
+  mage.createSynth = createSynth(mage);
+  mage.cast = (name, props) => {
+    const delay = beatLength * (beatsPerCycle - beatCount % beatsPerCycle) * 1e3 - CAST_DELAY_CORRECTION;
+    if (props == null) {
       window.setTimeout(() => {
-        spells.set(name, spell);
+        spells.delete(name);
       }, delay);
-    },
-    useMetronome(enabled = true) {
-      if (enabled) {
-        const sound = () => createSynth(
-          this.audioContext,
-          this.analyser
-        )([
-          {
-            type: "square",
-            detune: 0,
-            semitone: 0
-          }
-        ]);
-        const sequence = ({ beats }) => {
-          return [
-            createStep(beats === 0 ? NOTE_NUMBERS.A6 : NOTE_NUMBERS.A5, 1, 0.2)
-          ];
-        };
-        const duration = 1;
-        this.cast("metronome", {
-          sound,
-          sequence,
-          duration
-        });
-      } else {
-        this.cast("metronome", null);
-      }
+      return;
+    }
+    const spell = createSpell(mage)(props);
+    window.setTimeout(() => {
+      spells.set(name, spell);
+    }, delay);
+  };
+  mage.suppress = (name) => {
+    mage.cast(name, null);
+  };
+  mage.useMetronome = (enabled = true) => {
+    if (enabled) {
+      const sound = () => createSynth(mage)([
+        {
+          type: "square",
+          detune: 0,
+          semitone: 0
+        }
+      ]);
+      const sequence = ({ beats }) => {
+        return [
+          createStep(beats === 0 ? NOTE_NUMBERS.A6 : NOTE_NUMBERS.A5, 1, 0.2)
+        ];
+      };
+      const duration = 1;
+      mage.cast("metronome", {
+        sound,
+        sequence,
+        duration
+      });
+    } else {
+      mage.cast("metronome", null);
     }
   };
+  const tickEvent = new CustomEvent("tick", {
+    detail: {
+      getTiming: mage.getTiming
+    }
+  });
+  return mage;
 };
 
 // src/mage.scale.ts

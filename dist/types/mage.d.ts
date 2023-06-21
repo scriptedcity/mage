@@ -21,7 +21,7 @@ import { Mage } from "./mage.types";
  *  - `beatCount` - The current beat count.
  *  - `start` - A function to start the mage.
  *  - `stop` - A function to stop the mage.
- *  - `timing` - An object with the current cycle count (`cycles`) and the current beat count in the cycle (`beats`).
+ *  - `getTiming` - An object with the current cycle count (`cycles`) and the current beat count in the cycle (`beats`).
  *  - `createSampler` - A function to create a sampler.
  *  - `createSynth` - A function to create a synth.
  *  - `getRandomInt` - A function to get a random integer.
@@ -29,7 +29,9 @@ import { Mage } from "./mage.types";
  *    - `source` - The sound source for the spell.
  *    - `sequence` - A function to create a sequence of notes.
  *    - `duration` - The duration of the spell in beats.
+ *  - `suppress` - A function to suppress a spell. It takes a `name` as an argument.
  *  - `useMetronome` - A function to enable or disable a metronome sound.
+ * @eventProperty tick - A tick event that is dispatched on each beat.
  */
 export declare const createMage: ({ tempo, beatsPerCycle, randomSeed, }: {
     tempo?: number | undefined;

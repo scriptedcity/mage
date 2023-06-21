@@ -26,6 +26,7 @@ export declare const createSpell: (mage: Mage) => (props: {
     isActivated: boolean;
     nextScheduleTime: number;
     readonly currentStep: number;
+    analyser: AnalyserNode;
     schedule: (currentTime: number, beatLength: number) => void;
     sound: Sound;
     sequence: Sequence;

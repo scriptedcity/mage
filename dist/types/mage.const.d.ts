@@ -3,7 +3,7 @@
  * the scheduling delay when casting (i.e., playing) a musical spell (i.e., a sequence of sounds).
  * The value represents a delay in milliseconds.
  */
-export declare const CAST_DELAY_CORRECTION = 50;
+export declare const CAST_DELAY_CORRECTION = 10;
 /**
  * `WORK_INTERVAL` is a constant that defines a standard duration (in seconds) for a work interval.
  */

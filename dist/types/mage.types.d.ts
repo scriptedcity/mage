@@ -9,12 +9,13 @@ export type Mage = {
     tempo: number;
     beatsPerCycle: number;
     beatLength: number;
-    readonly timing: Pick<Timing, "cycles" | "beats">;
+    getTiming: () => Pick<Timing, "cycles" | "beats">;
     cast: (name: string, props: {
         sound: Sound;
         sequence: Sequence;
         duration: number;
     } | null) => void;
+    suppress: (name: string) => void;
     start: () => void;
     stop: () => void;
     spells: Map<string, Spell>;
@@ -30,6 +31,7 @@ export type Mage = {
     useMetronome: (enabled: boolean) => void;
 };
 export type Spell = {
+    analyser: AnalyserNode;
     isActivated: boolean;
     nextScheduleTime: number;
     readonly currentStep: number;
@@ -59,6 +61,6 @@ export type Source = {
         duration: number;
         startTime: number;
         adsr?: Envelope;
-    }) => void;
+    }, analysers?: AnalyserNode[]) => void;
 };
 export type OscillatorType = "sine" | "square" | "sawtooth" | "triangle";
