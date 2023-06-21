@@ -1,4 +1,4 @@
-import { Mage, Spell, Sequence, Timing } from "./mage.types";
+import { Mage, Spell, Sequence } from "./mage.types";
 import { createSpell } from "./mage.spell";
 import { createSynth } from "./mage.synth";
 import { createSampler } from "./mage.sampler";

@@ -46,7 +46,7 @@ export const createSpell =
       }
       return result;
     };
-    const tempSteps = sequence({ ...mage.timing, loopCount });
+    const tempSteps = sequence({ ...mage.getTiming(), loopCount });
     let steps = flatSteps(tempSteps, 1 / tempSteps.length);
     // schedule notes
     const schedule = (currentTime: number, beatLength: number) => {
@@ -57,7 +57,7 @@ export const createSpell =
         const { step, value } = steps[_currentStep];
         if (step) {
           [step.noteNumber].flat().forEach((noteNumber) => {
-            sound({ ...mage.timing, loopCount }).play(
+            sound({ ...mage.getTiming(), loopCount }).play(
               {
                 noteNumber,
                 startTime: _nextScheduleTime,
@@ -76,7 +76,7 @@ export const createSpell =
           _currentStep = 0;
           loopCount++;
           steps = flatSteps(
-            sequence({ ...mage.timing, loopCount }),
+            sequence({ ...mage.getTiming(), loopCount }),
             1 / tempSteps.length
           );
         }
