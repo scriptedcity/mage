@@ -1,4 +1,4 @@
-import { Mage, Spell, Sequence } from "./mage.types";
+import { Mage, Spell, Sequence, Timing } from "./mage.types";
 import { createSpell } from "./mage.spell";
 import { createSynth } from "./mage.synth";
 import { createSampler } from "./mage.sampler";
@@ -33,7 +33,7 @@ import {
  *  - `beatCount` - The current beat count.
  *  - `start` - A function to start the mage.
  *  - `stop` - A function to stop the mage.
- *  - `timing` - An object with the current cycle count (`cycles`) and the current beat count in the cycle (`beats`).
+ *  - `getTiming` - An object with the current cycle count (`cycles`) and the current beat count in the cycle (`beats`).
  *  - `createSampler` - A function to create a sampler.
  *  - `createSynth` - A function to create a synth.
  *  - `getRandomInt` - A function to get a random integer.
@@ -41,7 +41,9 @@ import {
  *    - `source` - The sound source for the spell.
  *    - `sequence` - A function to create a sequence of notes.
  *    - `duration` - The duration of the spell in beats.
+ *  - `suppress` - A function to suppress a spell. It takes a `name` as an argument.
  *  - `useMetronome` - A function to enable or disable a metronome sound.
+ * @eventProperty tick - A tick event that is dispatched on each beat.
  */
 
 export const createMage = ({
@@ -73,9 +75,9 @@ export const createMage = ({
           }
         });
       }
-      console.log({
-        beatCount,
-      });
+      // dispatch tick event
+      audioContext.dispatchEvent(tickEvent);
+
       beatCount++;
       nextScheduleTime += beatLength;
     }
@@ -93,7 +95,7 @@ export const createMage = ({
 
   const rng = getRandomInt(RNG(randomSeed));
 
-  const mage: Partial<Mage> = {
+  const mage = {
     audioContext,
     analyser,
     tempo,
@@ -105,15 +107,17 @@ export const createMage = ({
     stop,
     getRandomInt: rng,
     createSequence: createSequence(rng),
-    get timing() {
-      return {
-        cycles: Math.floor(beatCount / beatsPerCycle),
-        beats: beatCount % beatsPerCycle,
-      };
-    },
+  } as unknown as Mage;
+
+  //add functions
+  mage.getTiming = () => {
+    return {
+      cycles: Math.floor(beatCount / beatsPerCycle),
+      beats: (beatCount % beatsPerCycle) + 1,
+    };
   };
-  mage.createSampler = createSampler(mage as Mage);
-  mage.createSynth = createSynth(mage as Mage);
+  mage.createSampler = createSampler(mage);
+  mage.createSynth = createSynth(mage);
   mage.cast = (name, props) => {
     const delay =
       beatLength * (beatsPerCycle - (beatCount % beatsPerCycle)) * 1000 -
@@ -128,6 +132,9 @@ export const createMage = ({
     window.setTimeout(() => {
       spells.set(name, spell);
     }, delay);
+  };
+  mage.suppress = (name) => {
+    mage.cast(name, null);
   };
   mage.useMetronome = (enabled = true) => {
     if (enabled) {
@@ -154,5 +161,12 @@ export const createMage = ({
       (mage as Mage).cast("metronome", null);
     }
   };
-  return mage as Mage;
+
+  // custom event
+  const tickEvent = new CustomEvent("tick", {
+    detail: {
+      getTiming: mage.getTiming,
+    },
+  });
+  return mage;
 };

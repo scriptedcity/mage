@@ -6,7 +6,7 @@ export type Mage = {
   tempo: number;
   beatsPerCycle: number;
   beatLength: number;
-  readonly timing: Pick<Timing, "cycles" | "beats">;
+  getTiming: () => Pick<Timing, "cycles" | "beats">;
   cast: (
     name: string,
     props: {
@@ -15,6 +15,7 @@ export type Mage = {
       duration: number;
     } | null
   ) => void;
+  suppress: (name: string) => void;
   start: () => void;
   stop: () => void;
   spells: Map<string, Spell>;
