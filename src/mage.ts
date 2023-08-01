@@ -125,12 +125,16 @@ export const createMage = ({
     if (props == null) {
       window.setTimeout(() => {
         spells.delete(name);
+        // dispatch spellChange event
+        audioContext.dispatchEvent(spellChangedEvent);
       }, delay);
       return;
     }
     const spell = createSpell(mage as Mage)(props);
     window.setTimeout(() => {
       spells.set(name, spell);
+      // dispatch spellChange event
+      audioContext.dispatchEvent(spellChangedEvent);
     }, delay);
   };
   mage.suppress = (name) => {
@@ -166,6 +170,12 @@ export const createMage = ({
   const tickEvent = new CustomEvent("tick", {
     detail: {
       getTiming: mage.getTiming,
+    },
+  });
+
+  const spellChangedEvent = new CustomEvent("spellChanged", {
+    detail: {
+      spells: mage.spells,
     },
   });
   return mage;

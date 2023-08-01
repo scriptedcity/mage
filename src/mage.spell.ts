@@ -70,6 +70,9 @@ export const createSpell =
         }
         _nextScheduleTime += spellLength * value;
 
+        // dispatch tick event
+        mage.audioContext.dispatchEvent(tickEvent);
+
         // schedule next run
         _currentStep++;
         if (_currentStep >= steps.length) {
@@ -82,6 +85,20 @@ export const createSpell =
         }
       }
     };
+
+    // custom event
+    const getTiming = () => {
+      return {
+        cycles: loopCount,
+        beats: _currentStep + 1,
+      };
+    };
+
+    const tickEvent = new CustomEvent("tick", {
+      detail: {
+        getTiming,
+      },
+    });
 
     return {
       get isActivated() {
